@@ -17,12 +17,14 @@
 			"@/compnents/*": ["./src/components/*"],
 			"@/assets/*": ["./assets/*"],
 			"@/utils/*": ["./src/utils/*"],
+			"@/styles/*": ["./src/styles/*"],
+			"@/stores/*": ["./src/stores/*"],
 			"@/types": ["./src/types/types.ts"],
 			"@/props": ["./src/types/props.ts"],
-			"@/styles/*": ["./src/styles/*"],
+			"@/enums": ["./src/types/enums.ts"],
 			"@/constants": ["./src/constants/constants.ts"]
 		}
 	},
-	"include": ["**/*.ts", "**/*.tsx"],
+	"include": ["**/*.ts", "**/*.tsx", "oold"],
 	"exclude": ["node_modules"]
 }

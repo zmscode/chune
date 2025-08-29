@@ -9,23 +9,23 @@ export const floatingPlayerStyles = StyleSheet.create({
 		borderRadius: 12,
 		paddingVertical: 10,
 	},
-	trackArtworkImage: {
+	songArtworkImage: {
 		width: 40,
 		height: 40,
 		borderRadius: 8,
 	},
-	trackTitleContainer: {
+	songTitleContainer: {
 		flex: 1,
 		overflow: "hidden",
 		marginLeft: 10,
 	},
-	trackTitle: {
+	songTitle: {
 		fontSize: 18,
 		color: "#171f21",
 		fontWeight: "600",
 		paddingLeft: 10,
 	},
-	trackControlsContainer: {
+	songControlsContainer: {
 		flexDirection: "row",
 		alignItems: "center",
 		columnGap: 20,

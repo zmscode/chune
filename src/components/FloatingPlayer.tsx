@@ -1,5 +1,4 @@
-import { UNKNOWN_TRACK_IMAGE_URI } from "@/constants";
-import { useCurrentTrack } from "@/hooks/audio/audioPlayerHooks";
+import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
 import { floatingPlayerStyles } from "@/styles/floatingPlayer";
 import { TouchableOpacity, ViewProps, View } from "react-native";
 import FastImage from "react-native-fast-image";
@@ -8,11 +7,12 @@ import {
 	PlayPauseButton,
 	SkipToNextButton,
 } from "@/components/player/PlayerControls";
+import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
 
 export const FloatingPlayer = ({ style }: ViewProps) => {
-	const currentTrack = useCurrentTrack();
+	const { currentSong } = useAudioPlayer();
 
-	if (!currentTrack) return null;
+	if (!currentSong) return null;
 
 	const handlePress = () => {};
 
@@ -24,19 +24,19 @@ export const FloatingPlayer = ({ style }: ViewProps) => {
 		>
 			<FastImage
 				source={{
-					uri: currentTrack.artwork ?? UNKNOWN_TRACK_IMAGE_URI,
+					uri: currentSong.artwork ?? UNKNOWN_SONG_IMAGE_URI,
 				}}
 			/>
 
 			<View>
 				<SideScrollingText
-					style={floatingPlayerStyles.trackTitle}
-					text={currentTrack.title ?? ""}
+					style={floatingPlayerStyles.songTitle}
+					text={currentSong.title ?? ""}
 					animationThreshold={25}
 				/>
 			</View>
 
-			<View style={floatingPlayerStyles.trackControlsContainer}>
+			<View style={floatingPlayerStyles.songControlsContainer}>
 				<PlayPauseButton iconSize={24} />
 
 				<SkipToNextButton iconSize={24} />

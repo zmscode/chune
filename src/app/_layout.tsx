@@ -1,14 +1,17 @@
+import AudioService from "@/core/AudioService";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import { SheetProvider } from "react-native-actions-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { useInitializeAudio } from "@/hooks/audio/audioPlayerHooks";
 
 SplashScreen.preventAutoHideAsync();
 
 const App = () => {
-	useInitializeAudio();
+	useEffect(() => {
+		AudioService.initialize();
+	}, []);
 	SplashScreen.hideAsync();
 
 	return (
@@ -26,9 +29,11 @@ const App = () => {
 
 const RootNavigation = () => {
 	return (
-		<Stack>
-			<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-		</Stack>
+		<>
+			<Stack>
+				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+			</Stack>
+		</>
 	);
 };
 

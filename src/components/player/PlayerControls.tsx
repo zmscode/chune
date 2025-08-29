@@ -1,4 +1,5 @@
-import { useAudioControls, useIsPlaying } from "@/hooks/audio/audioPlayerHooks";
+import AudioService from "@/core/AudioService";
+import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
 import { PlayerControlsProps } from "@/props";
 import { playerControlsStyles } from "@/styles/playerControls";
 import {
@@ -27,14 +28,15 @@ export const PlayPauseButton = ({
 	style,
 	iconSize = 52,
 }: PlayerControlsProps) => {
-	const isPlaying = useIsPlaying();
+	const { isPlaying } = useAudioPlayer();
+
+	const togglePlayPause = () => {
+		isPlaying ? AudioService.pause() : AudioService.play();
+	};
 
 	return (
 		<View style={[{ height: iconSize }, style]}>
-			<TouchableOpacity
-				activeOpacity={0.85}
-				onPress={useAudioControls().togglePlayPause}
-			>
+			<TouchableOpacity activeOpacity={0.85} onPress={togglePlayPause}>
 				{isPlaying ? (
 					<PauseIcon size={iconSize} color={"#171f21"} />
 				) : (
@@ -49,7 +51,7 @@ export const SkipToNextButton = ({ iconSize = 40 }: PlayerControlsProps) => {
 	return (
 		<TouchableOpacity
 			activeOpacity={0.7}
-			onPress={() => useAudioControls().skipToNext}
+			onPress={() => AudioService.skipToNext()}
 		>
 			<FastForwardIcon size={iconSize} color={"#171f21"} />
 		</TouchableOpacity>
@@ -62,7 +64,7 @@ export const SkipToPreviousButton = ({
 	return (
 		<TouchableOpacity
 			activeOpacity={0.7}
-			onPress={() => useAudioControls().skipToPrevious}
+			onPress={() => AudioService.skipToPrevious()}
 		>
 			<RewindIcon size={iconSize} color={"#171f21"} />
 		</TouchableOpacity>

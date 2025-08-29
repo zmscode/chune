@@ -8,3 +8,9 @@ export const formatTime = (seconds: number): string => {
 		.toString()
 		.padStart(2, "0")}`;
 };
+
+export const generateSongListId = (songListName: string, search?: string) => {
+	if (!search) return `${songListName}`;
+
+	return `${songListName}-${search}`;
+};
