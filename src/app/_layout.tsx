@@ -15,17 +15,20 @@ const App = () => {
 		<SafeAreaProvider>
 			<GestureHandlerRootView style={{ flex: 1 }}>
 				<SheetProvider context="global">
-					<Stack>
-						<Stack.Screen
-							name="(tabs)"
-							options={{ headerShown: true }}
-						/>
-					</Stack>
+					<RootNavigation />
 
 					<StatusBar style="auto" />
 				</SheetProvider>
 			</GestureHandlerRootView>
 		</SafeAreaProvider>
+	);
+};
+
+const RootNavigation = () => {
+	return (
+		<Stack>
+			<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+		</Stack>
 	);
 };
 

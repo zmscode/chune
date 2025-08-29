@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { View } from "react-native";
 
-const SongsScreenLayout = () => {
+const PlaylistsScreenLayout = () => {
 	return (
 		<View style={{ flex: 1, backgroundColor: "#eeeeee" }}>
 			<Stack>
@@ -9,7 +9,7 @@ const SongsScreenLayout = () => {
 					name="index"
 					options={{
 						headerTransparent: true,
-						headerTitle: "Songs",
+						headerTitle: "Playlists",
 					}}
 				/>
 			</Stack>
@@ -17,4 +17,4 @@ const SongsScreenLayout = () => {
 	);
 };
 
-export default SongsScreenLayout;
+export default PlaylistsScreenLayout;

@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 
-const SongsScreen = () => {
+const PlaylistsScreen = () => {
 	return (
 		<View
 			style={{
@@ -11,4 +11,4 @@ const SongsScreen = () => {
 	);
 };
 
-export default SongsScreen;
+export default PlaylistsScreen;
