@@ -17,8 +17,10 @@
 			"@/compnents/*": ["./src/components/*"],
 			"@/assets/*": ["./assets/*"],
 			"@/utils/*": ["./src/utils/*"],
-			"@/types/*": ["./src/types/*"],
-			"@/styles/*": ["./src/styles/*"]
+			"@/types": ["./src/types/types.ts"],
+			"@/props": ["./src/types/props.ts"],
+			"@/styles/*": ["./src/styles/*"],
+			"@/constants": ["./src/constants/constants.ts"]
 		}
 	},
 	"include": ["**/*.ts", "**/*.tsx"],

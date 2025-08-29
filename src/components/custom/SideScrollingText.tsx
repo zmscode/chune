@@ -1,4 +1,4 @@
-import { SideScrollingTextProps } from "@/types/props";
+import { SideScrollingTextProps } from "@/props";
 import { useEffect } from "react";
 import Animated, {
 	Easing,

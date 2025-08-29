@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 
-const FavouritesScreen = () => {
+const SongsScreen = () => {
 	return (
 		<View
 			style={{
@@ -13,4 +13,4 @@ const FavouritesScreen = () => {
 	);
 };
 
-export default FavouritesScreen;
+export default SongsScreen;

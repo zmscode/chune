@@ -1,23 +1,15 @@
-import { SplashScreen, Stack, useRouter } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useCallback } from "react";
 import { SheetProvider } from "react-native-actions-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { StyleSheet, Text } from "react-native";
-import TrackPlayer from "react-native-track-player";
-import { playbackService } from "@/utils/playbackService";
-import { useSetupTrackPlayer } from "@/hooks/useSetupTrackPlayer";
+import { useInitializeAudio } from "@/hooks/audio/audioPlayerHooks";
 
 SplashScreen.preventAutoHideAsync();
-TrackPlayer.registerPlaybackService(() => playbackService);
 
 const App = () => {
-	useSetupTrackPlayer({
-		onLoad: useCallback(() => {
-			SplashScreen.hideAsync();
-		}, []),
-	});
+	useInitializeAudio();
+	SplashScreen.hideAsync();
 
 	return (
 		<SafeAreaProvider>

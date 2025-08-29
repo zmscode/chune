@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { View } from "react-native";
 
-const FavouritesScreenLayout = () => {
+const SongsScreenLayout = () => {
 	return (
 		<View style={{ flex: 1, backgroundColor: "#eeeeee" }}>
 			<Stack>
@@ -19,7 +19,7 @@ const FavouritesScreenLayout = () => {
 						headerTransparent: true,
 						headerBlurEffect: "prominent",
 						headerShadowVisible: false,
-						headerTitle: "Favourites",
+						headerTitle: "Songs",
 					}}
 				/>
 			</Stack>
@@ -27,4 +27,4 @@ const FavouritesScreenLayout = () => {
 	);
 };
 
-export default FavouritesScreenLayout;
+export default SongsScreenLayout;
