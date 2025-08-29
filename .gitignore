@@ -141,3 +141,4 @@ package.json
 
 # Expo directory
 .expo/
+.expo/*
