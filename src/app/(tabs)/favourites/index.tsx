@@ -1,13 +1,14 @@
-import { useMemo } from "react";
-import { ScrollView, View } from "react-native";
+import { View, Text } from "react-native";
 
 const FavouritesScreen = () => {
 	return (
-		<View style={defaultStyles.container}>
-			<ScrollView
-				style={{ paddingHorizontal: { horizontal: 24 } }}
-				contentInsetAdjustmentBehavior="automatic"
-			></ScrollView>
+		<View
+			style={{
+				flex: 1,
+				backgroundColor: "#eeeeee",
+			}}
+		>
+			<Text>Open up App.tsx to start working on your app!</Text>
 		</View>
 	);
 };

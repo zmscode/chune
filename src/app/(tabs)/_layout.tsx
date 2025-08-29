@@ -26,7 +26,7 @@ const TabsNavigation = () => {
 					name="favourites"
 					options={{
 						title: "Favourites",
-						tabBarIcon: ({ color }) => (
+						tabBarIcon: ({ color }: { color: string }) => (
 							<HeartIcon size={24} color={color} />
 						),
 					}}

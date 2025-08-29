@@ -3,19 +3,19 @@ import { View } from "react-native";
 
 const FavouritesScreenLayout = () => {
 	return (
-		<View style={{ flex: 1, backgroundColor: themeColours.background }}>
+		<View style={{ flex: 1, backgroundColor: "#eeeeee" }}>
 			<Stack>
 				<Stack.Screen
 					name="index"
 					options={{
 						headerLargeTitle: true,
 						headerLargeStyle: {
-							backgroundColor: themeColours.background,
+							backgroundColor: "#eeeeee",
 						},
 						headerLargeTitleStyle: {
-							color: textColours.text,
+							color: "#171f21",
 						},
-						headerTintColor: textColours.text,
+						headerTintColor: "#171f21",
 						headerTransparent: true,
 						headerBlurEffect: "prominent",
 						headerShadowVisible: false,
