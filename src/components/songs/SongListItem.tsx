@@ -1,21 +1,21 @@
 import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
-import { useCurrentSong, useIsPlaying } from "@/hooks/audio/audioPlayerHooks";
-import { SongListItemProps } from "@/props";
 import {
 	DotsThreeOutlineIcon,
 	EqualizerIcon,
 	PauseIcon,
 } from "phosphor-react-native";
-import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import { Text, TouchableHighlight, View } from "react-native";
 import FastImage from "react-native-fast-image";
+import { SongListItemProps } from "@/props";
+import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
 
 export const SongListItem = ({
 	song,
 	onSongSelect: handleSongSelect,
+	isPlaying = false,
+	isActiveQueue = false,
 }: SongListItemProps) => {
-	const isPlaying = useIsPlaying();
-
-	const currentSong = useCurrentSong()?.url === song.url;
+	const isActiveSong = isPlaying && isActiveQueue;
 
 	return (
 		<TouchableHighlight onPress={() => handleSongSelect(song)}>
@@ -34,43 +34,37 @@ export const SongListItem = ({
 							priority: FastImage.priority.normal,
 						}}
 						style={{
-							...{
-								borderRadius: 8,
-								width: 50,
-								height: 50,
-							},
-							opacity: currentSong ? 0.35 : 1,
+							borderRadius: 8,
+							width: 50,
+							height: 50,
+							opacity: isActiveSong ? 0.35 : 1,
 						}}
 					/>
 
-					{currentSong &&
+					{isActiveSong &&
 						(isPlaying ? (
 							<EqualizerIcon
 								size={24}
-								color={"#2b2e2f"}
+								color={"#2d3538"}
 								style={{
-									...{
-										position: "absolute",
-										top: 0,
-										bottom: 0,
-										left: 0,
-										right: 0,
-									},
+									position: "absolute",
+									top: 0,
+									bottom: 0,
+									left: 0,
+									right: 0,
 									margin: 12,
 								}}
 							/>
 						) : (
 							<PauseIcon
 								size={24}
-								color={"#2b2e2f"}
+								color={"#2d3538"}
 								style={{
-									...{
-										position: "absolute",
-										top: 0,
-										bottom: 0,
-										left: 0,
-										right: 0,
-									},
+									position: "absolute",
+									top: 0,
+									bottom: 0,
+									left: 0,
+									right: 0,
 									margin: 12,
 								}}
 							/>
@@ -90,12 +84,11 @@ export const SongListItem = ({
 							numberOfLines={1}
 							style={{
 								...{
-									color: "#171f21",
 									fontSize: 16,
 									fontWeight: "600",
 									maxWidth: "90%",
 								},
-								color: currentSong ? "#91dc6e" : "#171f21",
+								color: isActiveSong ? "#91dc6e" : "#171f21",
 							}}
 						>
 							{song.title}

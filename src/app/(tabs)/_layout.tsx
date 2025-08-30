@@ -6,6 +6,7 @@ const TabsNavigation = () => {
 	return (
 		<>
 			<Tabs
+				initialRouteName="(songs)"
 				screenOptions={{
 					tabBarActiveTintColor: "#91dc6e",
 					tabBarLabelStyle: {
@@ -34,7 +35,7 @@ const TabsNavigation = () => {
 				/>
 
 				<Tabs.Screen
-					name="playlists"
+					name="(playlists)"
 					options={{
 						title: "Playlists",
 						tabBarIcon: ({ color }: { color: string }) => (

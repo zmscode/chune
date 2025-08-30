@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { AudioState } from "@/types";
 
 export const useAudioStore = create<AudioState>((set) => ({
-	currentTrack: null,
+	currentSong: null,
 	queue: [],
 	isPlaying: false,
 	position: 0,
@@ -10,9 +10,10 @@ export const useAudioStore = create<AudioState>((set) => ({
 	isLoading: false,
 	repeatMode: "off",
 	isShuffled: false,
+	volume: 1.0,
 
-	setCurrentTrack: (track) => set({ currentTrack: track }),
-	setQueue: (tracks) => set({ queue: tracks }),
+	setCurrentSong: (song) => set({ currentSong: song }),
+	setQueue: (songs) => set({ queue: songs }),
 	setPlaybackStatus: (status) =>
 		set({
 			isPlaying: status.isPlaying,
@@ -22,4 +23,5 @@ export const useAudioStore = create<AudioState>((set) => ({
 		}),
 	setRepeatMode: (mode) => set({ repeatMode: mode }),
 	toggleShuffle: () => set((state) => ({ isShuffled: !state.isShuffled })),
+	setVolume: (volume) => set({ volume }),
 }));

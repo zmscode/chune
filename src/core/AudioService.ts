@@ -1,5 +1,5 @@
 import { RepeatMode, Song } from "@/types";
-import { AudioPlayer, AudioSource } from "expo-audio";
+import { createAudioPlayer, AudioSource, AudioPlayer } from "expo-audio";
 
 class AudioService {
 	private player: AudioPlayer | null = null;
@@ -7,20 +7,24 @@ class AudioService {
 	private currentIndex: number = -1;
 	private isInitialized = false;
 	private listeners: Map<string, Set<Function>> = new Map();
+	private volume: number = 1.0;
+	private repeatMode: RepeatMode = "off";
 
 	async initialize(): Promise<void> {
 		if (this.isInitialized) return;
 
-		const initialSource: AudioSource = { uri: "" };
-		const updateInterval = 500;
+		try {
+			this.player = createAudioPlayer(null);
 
-		this.player = new AudioPlayer(initialSource, updateInterval);
+			this.player.addListener("playbackStatusUpdate", (status) => {
+				this.emit("statusUpdate", status);
+			});
 
-		this.player.addListener("playbackStatusUpdate", (status) => {
-			this.emit("statusUpdate", status);
-		});
-
-		this.isInitialized = true;
+			this.isInitialized = true;
+		} catch (error) {
+			console.error("Failed to initialize AudioService:", error);
+			throw error;
+		}
 	}
 
 	on(event: string, callback: Function): void {
@@ -39,18 +43,34 @@ class AudioService {
 	}
 
 	async loadSong(song: Song): Promise<void> {
-		if (!this.player) {
-			throw new Error("AudioService not initialized");
-		}
-
 		try {
-			const audioSource: AudioSource = { uri: song.uri };
+			const audioUrl = song.uri;
+			if (!audioUrl) {
+				throw new Error("No audio URL provided for song");
+			}
 
-			this.player.replace(audioSource);
+			const audioSource: AudioSource = { uri: audioUrl };
 
-			this.emit("songChange", song);
+			if (!this.player) {
+				const updateInterval = 500;
+				this.player = new AudioPlayer(audioSource, updateInterval);
+
+				this.player.addListener("playbackStatusUpdate", (status) => {
+					this.emit("statusUpdate", status);
+				});
+
+				// Note: expo-audio AudioPlayer doesn't support setVolumeAsync
+				// Volume will be managed by the component state
+
+				this.isInitialized = true;
+			} else {
+				this.player.replace(audioSource);
+				// Note: expo-audio AudioPlayer doesn't support setVolumeAsync
+			}
+
+			this.emit("trackChange", song);
 		} catch (error) {
-			console.error("Error loading song:", error);
+			console.error("Error loading track:", error);
 			throw error;
 		}
 	}
@@ -197,9 +217,33 @@ class AudioService {
 	}
 
 	private getRepeatMode(): RepeatMode {
-		// This should be connected to your store
-		// For now, returning a default value
-		return "off";
+		return this.repeatMode;
+	}
+
+	setRepeatMode(mode: RepeatMode): void {
+		this.repeatMode = mode;
+		this.emit("repeatModeUpdate", mode);
+	}
+
+	getRepeatModePublic(): RepeatMode {
+		return this.repeatMode;
+	}
+
+	async setVolume(volumeLevel: number): Promise<void> {
+		if (volumeLevel < 0 || volumeLevel > 1) {
+			throw new Error("Volume must be between 0 and 1");
+		}
+
+		this.volume = volumeLevel;
+
+		// Note: expo-audio AudioPlayer doesn't support setVolumeAsync directly
+		// This will be managed through the component state and UI feedback
+
+		this.emit("volumeUpdate", this.volume);
+	}
+
+	getVolume(): number {
+		return this.volume;
 	}
 
 	async cleanup(): Promise<void> {

@@ -5,7 +5,15 @@ import { useEffect } from "react";
 import { SheetProvider } from "react-native-actions-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+	configureReanimatedLogger,
+	ReanimatedLogLevel,
+} from "react-native-reanimated";
 
+configureReanimatedLogger({
+	level: ReanimatedLogLevel.warn,
+	strict: false,
+});
 SplashScreen.preventAutoHideAsync();
 
 const App = () => {

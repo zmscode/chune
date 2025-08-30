@@ -1,98 +1,61 @@
 import { SongListProps } from "@/props";
-import { useRef } from "react";
 import { FlatList, View, Text } from "react-native";
 import FastImage from "react-native-fast-image";
 import { Song } from "@/types";
-import { useAudioPlayerStore } from "@/stores/audioPlayerStore";
 import { ItemDivider } from "@/components/custom/ItemDivider";
+import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
+import { useActiveQueue, useSetActiveQueue } from "@/stores/queueStore";
+import { memo, useCallback } from "react";
+import AudioService from "@/core/AudioService";
 import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
 import { SongListItem } from "@/components/songs/SongListItem";
-import { useCurrentSong, useQueue } from "@/hooks/audio/audioPlayerHooks";
 
 export const SongList = ({
 	id,
 	songs,
 	hideQueueControls = false,
+	queueName = "Queue",
+	queueType = "custom",
 	...flatlistProps
 }: SongListProps) => {
-	const queueOffset = useRef(0);
-	const activeQueueId = useRef<string | null>(null);
+	const { currentSong } = useAudioPlayer();
 
-	const { setQueue, loadSong, playSongAtIndex } = useAudioPlayerStore(
-		(state) => ({
-			setQueue: state.setQueue,
-			loadSong: state.loadSong,
-			playSongAtIndex: state.playSongAtIndex,
-		})
-	);
-
-	const { queue } = useQueue();
-	const currentSong = useCurrentSong();
-
-	const handleSongSelect = async (selectedSong: Song) => {
-		const songIndex = songs.findIndex(
-			(song) => song.url === selectedSong.url
-		);
-
-		if (songIndex === -1) return;
-
-		const isChangingQueue = id !== activeQueueId.current;
-
-		if (isChangingQueue) {
-			const beforeSongs = songs.slice(0, songIndex);
-			const afterSongs = songs.slice(songIndex + 1);
-
-			const newQueue = [selectedSong, ...afterSongs, ...beforeSongs];
-
-			setQueue(newQueue);
-
-			loadSong(selectedSong, true);
-
-			queueOffset.current = songIndex;
-			activeQueueId.current = id;
-		} else {
-			const currentQueueIndex = queue.findIndex(
-				(song: Song) => song.url === selectedSong.url
-			);
-
-			if (currentQueueIndex !== -1) {
-				playSongAtIndex(currentQueueIndex);
-			} else {
-				const beforeSongs = songs.slice(0, songIndex);
-				const afterSongs = songs.slice(songIndex + 1);
-				const newQueue = [selectedSong, ...afterSongs, ...beforeSongs];
-
-				setQueue(newQueue);
-				loadSong(selectedSong, true);
-
-				queueOffset.current = songIndex;
-				activeQueueId.current = id;
-			}
+	const handleSongSelect = useCallback(async (selectedSong: Song) => {
+		try {
+			await AudioService.initialize();
+			await AudioService.loadSong(selectedSong);
+			await AudioService.play();
+		} catch (error) {
+			console.error("Error playing song:", error);
 		}
-	};
+	}, []);
+
+	/* ListHeaderComponent={
+		!hideQueueControls ? (
+			<QueueControls
+				songs={songs}
+				queueId={id}
+				isActive={isActiveQueue}
+				style={{ paddingBottom: 20 }}
+			/>
+		) : undefined
+	} */
 
 	return (
 		<FlatList
 			data={songs}
 			contentContainerStyle={{ paddingTop: 10, paddingBottom: 128 }}
-			// ListHeaderComponent={
-			// 	!hideQueueControls ? (
-			// 		<QueueControls
-			// 			songs={songs}
-			// 			style={{ paddingBottom: 20 }}
-			// 		/>
-			// 	) : undefined
-			// }
 			ListFooterComponent={ItemDivider}
 			ItemSeparatorComponent={ItemDivider}
 			ListEmptyComponent={
 				<View>
 					<Text
 						style={{
-							fontSize: 20,
-							color: "#2d3538",
-							textAlign: "center",
-							marginTop: 20,
+							width: 200,
+							height: 200,
+							alignSelf: "center",
+							marginTop: 40,
+							opacity: 0.3,
 						}}
 					>
 						No songs found
@@ -112,11 +75,17 @@ export const SongList = ({
 					/>
 				</View>
 			}
-			renderItem={({ item: track }) => (
-				<SongListItem song={track} onSongSelect={handleSongSelect} />
+			renderItem={({ item: song }) => (
+				<SongListItem
+					song={song}
+					onSongSelect={handleSongSelect}
+					isPlaying={currentSong?.id === song.id}
+					isActiveQueue={true}
+				/>
 			)}
-			keyExtractor={(item) => item.url}
 			{...flatlistProps}
 		/>
 	);
 };
+
+export const SongsList = memo(SongList);

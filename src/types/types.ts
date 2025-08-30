@@ -1,8 +1,20 @@
 import { SongRating } from "@/enums";
+import { SheetDefinition } from "react-native-actions-sheet";
 
 export type ColourScheme = "light" | "dark" | null;
 
 export type RepeatMode = "off" | "song" | "queue";
+
+export type QueueType = "playlist" | "album" | "artist" | "search" | "custom";
+
+export type SheetData = {
+	title: string;
+	onOpen: () => void;
+};
+
+export interface Sheets {
+	player: SheetDefinition;
+}
 
 export interface Song {
 	uri: string;
@@ -39,63 +51,45 @@ export interface AudioState {
 	duration: number;
 	isLoading: boolean;
 	repeatMode: RepeatMode;
+	isShuffled: boolean;
+	volume: number;
 
 	setCurrentSong: (song: Song) => void;
 	setQueue: (songs: Array<Song>) => void;
 	setPlaybackStatus: (status: PlaybackStatus) => void;
 	setRepeatMode: (mode: RepeatMode) => void;
 	toggleShuffle: () => void;
+	setVolume: (volume: number) => void;
+}
+
+export interface QueueMetadata {
+	id: string;
+	type: QueueType;
+	name: string;
+	source?: string;
+}
+
+export interface QueueStore {
+	activeQueue: QueueMetadata | null;
+	queueHistory: Array<QueueMetadata>;
+	originalQueue: Array<Song> | null;
+	upNext: Array<Song>;
+
+	setActiveQueue: (metadata: QueueMetadata, songs: Song[]) => void;
+	clearActiveQueue: () => void;
+	addToUpNext: (song: Song) => void;
+	removeFromUpNext: (songId: string) => void;
+	clearUpNext: () => void;
+	saveOriginalQueue: (songs: Song[]) => void;
+	restoreOriginalQueue: () => Song[] | null;
+	addToHistory: (metadata: QueueMetadata) => void;
+	getPreviousQueue: () => QueueMetadata | null;
 }
 
 export interface DeviceState {
 	os: string;
+	isMobile: boolean;
 	width: number;
 	height: number;
 	isPortrait: boolean;
 }
-
-// export default interface AudioPlayer {
-// 	setupPlayer(options: number): Promise<void>;
-// 	updateOptions(options: number): Promise<void>;
-
-// 	load(song: Song): Promise<number | void>;
-// 	reset(): Promise<void>;
-// 	play(): Promise<void>;
-// 	pause(): Promise<void>;
-// 	stop(): Promise<void>;
-// 	setPlayWhenReady(playWhenReady: boolean): Promise<boolean>;
-// 	getPlayWhenReady(): Promise<boolean>;
-// 	seekTo(position: number): Promise<void>;
-// 	seekBy(offset: number): Promise<void>;
-// 	setVolume(level: number): Promise<void>;
-// 	getVolume(): Promise<number>;
-// 	setRate(rate: number): Promise<void>;
-// 	getRate(): Promise<number>;
-// 	getProgress(): Promise<number>;
-// 	getPlaybackState(): Promise<number>;
-// 	retry(): Promise<void>;
-
-// 	add(songs: Array<Song>, insertBeforeIndex?: number): Promise<number | void>;
-// 	move(fromIndex: number, toIndex: number): Promise<void>;
-// 	remove(indexes: Array<number>): Promise<void>;
-// 	removeUpcomingSongs(): Promise<void>;
-// 	skip(index: number, initialPosition?: number): Promise<void>;
-// 	skipToNext(initialPosition?: number): Promise<void>;
-// 	skipToPrevious(initialPosition?: number): Promise<void>;
-// 	updateMetadataForSong(songIndex: number, metadata: number): Promise<void>;
-// 	updateNowPlayingMetadata(metadata: number): Promise<void>;
-// 	setQueue(songs: Array<Song>): Promise<void>;
-// 	getQueue(): Promise<Array<Song>>;
-// 	setRepeatMode(mode: number): Promise<number>;
-// 	getRepeatMode(): Promise<number>;
-// 	getSong(index: number): Promise<Song | undefined>;
-// 	getActiveSongIndex(): Promise<number | undefined>;
-// 	getActiveSong(): Promise<Song | undefined>;
-
-// 	addListener(eventName: string): void;
-// 	removeListeners(count: number): void;
-
-// 	acquireWakeLock(): Promise<void>;
-// 	abandonWakeLock(): Promise<void>;
-// 	validateOnStartCommandIntent(): Promise<boolean>;
-// }

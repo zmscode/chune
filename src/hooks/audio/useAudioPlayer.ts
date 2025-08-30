@@ -1,4 +1,4 @@
-import { Song } from "@/types";
+import { Song, RepeatMode } from "@/types";
 import { AudioStatus } from "expo-audio";
 import AudioService from "@/core/AudioService";
 import { useCallback, useEffect } from "react";
@@ -12,9 +12,15 @@ export const useAudioPlayer = () => {
 		duration,
 		queue,
 		repeatMode,
+		volume,
+		isShuffled,
 		setCurrentSong,
 		setQueue,
 		setPlaybackStatus,
+		setVolume,
+		setRepeatMode,
+		toggleShuffle,
+		isLoading,
 	} = useAudioStore();
 
 	useEffect(() => {
@@ -41,16 +47,28 @@ export const useAudioPlayer = () => {
 			setQueue(newQueue);
 		};
 
+		const handleVolumeUpdate = (newVolume: number) => {
+			setVolume(newVolume);
+		};
+
+		const handleRepeatModeUpdate = (mode: RepeatMode) => {
+			setRepeatMode(mode);
+		};
+
 		AudioService.on("statusUpdate", handleStatusUpdate);
 		AudioService.on("trackChange", handleSongChange);
 		AudioService.on("queueUpdate", handleQueueUpdate);
+		AudioService.on("volumeUpdate", handleVolumeUpdate);
+		AudioService.on("repeatModeUpdate", handleRepeatModeUpdate);
 
 		return () => {
 			AudioService.off("statusUpdate", handleStatusUpdate);
 			AudioService.off("trackChange", handleSongChange);
 			AudioService.off("queueUpdate", handleQueueUpdate);
+			AudioService.off("volumeUpdate", handleVolumeUpdate);
+			AudioService.off("repeatModeUpdate", handleRepeatModeUpdate);
 		};
-	}, [setCurrentSong, setQueue, setPlaybackStatus]);
+	}, []);
 
 	const play = useCallback(async () => {
 		await AudioService.play();
@@ -96,6 +114,18 @@ export const useAudioPlayer = () => {
 		await AudioService.playSongAt(index);
 	}, []);
 
+	const updateVolume = useCallback(async (volumeLevel: number) => {
+		await AudioService.setVolume(volumeLevel);
+	}, []);
+
+	const setRepeatModeCallback = useCallback((mode: RepeatMode) => {
+		AudioService.setRepeatMode(mode);
+	}, []);
+
+	const toggleShuffleCallback = useCallback(() => {
+		toggleShuffle();
+	}, [toggleShuffle]);
+
 	return {
 		currentSong,
 		isPlaying,
@@ -103,6 +133,9 @@ export const useAudioPlayer = () => {
 		duration,
 		queue,
 		repeatMode,
+		volume,
+		isShuffled,
+		isLoading,
 
 		play,
 		pause,
@@ -113,5 +146,8 @@ export const useAudioPlayer = () => {
 		setQueue: setPlayerQueue,
 		shuffleQueue,
 		playSongAt,
+		updateVolume,
+		setRepeatMode: setRepeatModeCallback,
+		toggleShuffle: toggleShuffleCallback,
 	};
 };

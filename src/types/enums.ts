@@ -12,4 +12,5 @@ export enum AudioPlayerState {
 export enum SongRating {
 	NO_RATING = "noRating",
 	FAVOURITE = "favourite",
+	ONE = 1,
 }

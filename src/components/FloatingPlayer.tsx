@@ -6,41 +6,58 @@ import { SideScrollingText } from "@/components/custom/SideScrollingText";
 import {
 	PlayPauseButton,
 	SkipToNextButton,
-} from "@/components/player/PlayerControls";
+	PlayerScreen,
+} from "@/components/player/PlayerScreen";
 import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
+import { sheets } from "@/sheets/sheetManager";
 
 export const FloatingPlayer = ({ style }: ViewProps) => {
 	const { currentSong } = useAudioPlayer();
 
 	if (!currentSong) return null;
 
-	const handlePress = () => {};
+	const playerSheet = sheets.find((sheet) => sheet.title === "player");
+
+	const handlePress = () => {
+		if (!playerSheet) return;
+
+		playerSheet.onOpen();
+	};
 
 	return (
-		<TouchableOpacity
-			onPress={handlePress}
-			activeOpacity={0.9}
-			style={[floatingPlayerStyles.container, style]}
-		>
-			<FastImage
-				source={{
-					uri: currentSong.artwork ?? UNKNOWN_SONG_IMAGE_URI,
-				}}
-			/>
-
-			<View>
-				<SideScrollingText
-					style={floatingPlayerStyles.songTitle}
-					text={currentSong.title ?? ""}
-					animationThreshold={25}
+		<>
+			<TouchableOpacity
+				onPress={handlePress}
+				activeOpacity={0.9}
+				style={[floatingPlayerStyles.container, style]}
+			>
+				<FastImage
+					source={{
+						uri: currentSong.artwork ?? UNKNOWN_SONG_IMAGE_URI,
+					}}
+					style={{
+						width: 48,
+						height: 48,
+						borderRadius: 8,
+					}}
 				/>
-			</View>
 
-			<View style={floatingPlayerStyles.songControlsContainer}>
-				<PlayPauseButton iconSize={24} />
+				<View>
+					<SideScrollingText
+						style={floatingPlayerStyles.songTitle}
+						text={currentSong.title ?? ""}
+						animationThreshold={25}
+					/>
+				</View>
 
-				<SkipToNextButton iconSize={24} />
-			</View>
-		</TouchableOpacity>
+				<View style={floatingPlayerStyles.songControlsContainer}>
+					<PlayPauseButton iconSize={24} />
+
+					<SkipToNextButton iconSize={24} />
+				</View>
+			</TouchableOpacity>
+
+			<PlayerScreen />
+		</>
 	);
 };

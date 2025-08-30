@@ -1,6 +1,13 @@
-import { View, Text, ScrollView } from "react-native";
+import { useQueueWithAudio } from "@/stores/queueStore";
+import { generateSongListId } from "@/utils/utility";
+import { View, ScrollView } from "react-native";
+import { SongList } from "@/components/songs/SongList";
+import { loadLibrarySongs } from "@/utils/utility";
+import { useMemo } from "react";
 
 const SongsScreen = () => {
+	const songs = useMemo(() => loadLibrarySongs(), []);
+
 	return (
 		<View
 			style={{
@@ -12,7 +19,12 @@ const SongsScreen = () => {
 				contentInsetAdjustmentBehavior="automatic"
 				style={{ paddingHorizontal: 24 }}
 			>
-				<Text></Text>
+				<SongList
+					id={generateSongListId("songs")}
+					songs={songs}
+					queueName="Songs"
+					scrollEnabled={false}
+				/>
 			</ScrollView>
 		</View>
 	);

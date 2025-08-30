@@ -6,7 +6,7 @@ export const playerControlsStyles = StyleSheet.create({
 	},
 	row: {
 		flexDirection: "row",
-		justifyContent: "space-evenly",
+		justifyContent: "space-between",
 		alignItems: "center",
 	},
 });
