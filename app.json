@@ -26,7 +26,11 @@
 				"backgroundColor": "#ffffff"
 			},
 			"package": "com.zms.chune",
-			"edgeToEdgeEnabled": true
+			"edgeToEdgeEnabled": true,
+			"permissions": [
+				"android.permission.RECORD_AUDIO",
+				"android.permission.MODIFY_AUDIO_SETTINGS"
+			]
 		},
 		"web": {
 			"favicon": "./assets/favicon.png",
@@ -42,6 +46,13 @@
 					"microphonePermission": "Allow Chune to access your microphone."
 				}
 			]
-		]
+		],
+		"owner": "zmscode",
+		"extra": {
+			"router": {},
+			"eas": {
+				"projectId": "d6fc1667-cb08-43a6-adaa-a2391e429475"
+			}
+		}
 	}
 }

@@ -25,7 +25,7 @@ import { PlayerShuffleToggle } from "@/components/player/PlayerShuffleToggle";
 export const PlayerScreen = () => {
 	const { currentSong, isLoading } = useAudioPlayer();
 
-	const { width, height } = useDeviceStore();
+	const { height } = useDeviceStore();
 	const { top, bottom } = useSafeAreaInsets();
 
 	const [localFavourites, setLocalFavourites] = useState<Set<string>>(
@@ -66,138 +66,171 @@ export const PlayerScreen = () => {
 	return (
 		<ActionSheet
 			id="player"
+			isModal={false}
 			gestureEnabled={true}
 			indicatorStyle={{
-				width: width / 4,
+				width: 100,
+				marginTop: 10,
 			}}
 			containerStyle={{
-				width: width,
 				height: height,
+				backgroundColor: "white",
 			}}
-			isModal={false}
 		>
 			<View
 				style={{
-					flex: 1,
-					backgroundColor: "#eeeeee",
+					height: height - top - 20,
+					paddingTop: 30,
+					paddingBottom: bottom + 20,
 					paddingHorizontal: 24,
 				}}
 			>
 				<View
 					style={{
-						flex: 1,
-						marginTop: top + 50,
-						marginBottom: bottom,
-						justifyContent: "space-between",
+						alignItems: "center",
+						marginBottom: 50,
 					}}
 				>
-					<FastImage
-						source={{
-							uri: currentSong?.artwork ?? UNKNOWN_SONG_IMAGE_URI,
-							priority: FastImage.priority.high,
-						}}
-						resizeMode="cover"
+					<View
 						style={{
-							width: "90%",
-							aspectRatio: 1,
-							maxWidth: 350,
+							shadowOffset: {
+								width: 0,
+								height: 8,
+							},
+							shadowOpacity: 0.25,
+							shadowRadius: 12,
+							elevation: 8,
 							borderRadius: 12,
 						}}
-					/>
-
-					<View style={{ flex: 1 }}>
-						<View style={{ marginTop: "auto" }}>
-							<View style={{ height: 60 }}>
-								<View
-									style={{
-										flexDirection: "row",
-										justifyContent: "space-between",
-										alignItems: "center",
-									}}
-								>
-									<View
-										style={{ flex: 1, overflow: "hidden" }}
-									>
-										<SideScrollingText
-											text={
-												currentSong?.title ||
-												"Unknown Title"
-											}
-											animationThreshold={30}
-											style={{
-												color: "#171f21",
-												fontSize: 22,
-												fontWeight: 700,
-											}}
-										/>
-									</View>
-
-									<TouchableOpacity
-										activeOpacity={0.8}
-										onPress={toggleFavourite}
-										disabled={!currentSong?.id}
-									>
-										<HeartIcon
-											size={24}
-											color={
-												isFavourite
-													? "#f86370"
-													: "#2b2e2f"
-											}
-											style={{ marginLeft: 14 }}
-										/>
-									</TouchableOpacity>
-								</View>
-
-								{currentSong?.artist && (
-									<Text
-										numberOfLines={1}
-										style={{
-											color: "#171f21",
-											fontSize: 20,
-											opacity: 0.8,
-										}}
-									>
-										{currentSong.artist}
-									</Text>
-								)}
-							</View>
-
-							<PlayerProgressBar style={{ marginTop: 32 }} />
-
-							<View
-								style={[
-									playerControlsStyles.container,
-									{ marginBottom: 50 },
-								]}
-							>
-								<View style={playerControlsStyles.row}>
-									<SkipToPreviousButton />
-
-									<PlayPauseButton />
-
-									<SkipToNextButton />
-								</View>
-							</View>
-						</View>
-
-						<PlayerVolumeBar
-							style={{ marginTop: "auto", marginBottom: 30 }}
+					>
+						<FastImage
+							source={{
+								uri:
+									currentSong?.artwork ??
+									UNKNOWN_SONG_IMAGE_URI,
+								priority: FastImage.priority.high,
+							}}
+							resizeMode="cover"
+							style={{
+								width: height * 0.38,
+								height: height * 0.38,
+								maxWidth: 350,
+								maxHeight: 350,
+								borderRadius: 12,
+							}}
 						/>
+					</View>
+				</View>
 
+				{/* Song Title and Artist */}
+				<View style={{ marginBottom: 40 }}>
+					<View
+						style={{
+							flexDirection: "row",
+							justifyContent: "space-between",
+							alignItems: "center",
+							marginBottom: 8,
+						}}
+					>
 						<View
 							style={{
-								flexDirection: "row",
-								justifyContent: "center",
-								alignItems: "center",
-								margin: "auto",
+								flex: 1,
+								overflow: "hidden",
+								marginRight: 12,
 							}}
 						>
-							<PlayerShuffleToggle />
-
-							<PlayerRepeatToggle />
+							<SideScrollingText
+								text={currentSong?.title || "Unknown Title"}
+								animationThreshold={30}
+								style={{
+									color: "#171f21",
+									fontSize: 24,
+									fontWeight: "700",
+								}}
+							/>
 						</View>
+
+						<TouchableOpacity
+							activeOpacity={0.7}
+							onPress={toggleFavourite}
+							disabled={!currentSong?.id}
+							hitSlop={{
+								top: 10,
+								bottom: 10,
+								left: 10,
+								right: 10,
+							}}
+						>
+							<HeartIcon
+								size={26}
+								color={isFavourite ? "#f86370" : "#2b2e2f"}
+							/>
+						</TouchableOpacity>
 					</View>
+
+					{currentSong?.artist && (
+						<Text
+							numberOfLines={1}
+							style={{
+								color: "#171f21",
+								fontSize: 18,
+								opacity: 0.7,
+							}}
+						>
+							{currentSong.artist}
+						</Text>
+					)}
+				</View>
+
+				{/* Progress Bar */}
+				<View style={{ marginBottom: 40 }}>
+					<PlayerProgressBar />
+				</View>
+
+				{/* Playback Controls */}
+				<View
+					style={[
+						playerControlsStyles.container,
+						{ marginBottom: 60 },
+					]}
+				>
+					<View
+						style={[
+							playerControlsStyles.row,
+							{
+								justifyContent: "center",
+								alignItems: "center",
+							},
+						]}
+					>
+						<SkipToPreviousButton iconSize={36} />
+
+						<View style={{ width: 40 }} />
+
+						<PlayPauseButton iconSize={56} />
+
+						<View style={{ width: 40 }} />
+
+						<SkipToNextButton iconSize={36} />
+					</View>
+				</View>
+
+				{/* Volume Bar */}
+				<View style={{ marginBottom: 40 }}>
+					<PlayerVolumeBar />
+				</View>
+
+				{/* Shuffle and Repeat */}
+				<View
+					style={{
+						flexDirection: "row",
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
+					<PlayerShuffleToggle />
+					<View style={{ width: 80 }} />
+					<PlayerRepeatToggle />
 				</View>
 			</View>
 		</ActionSheet>
@@ -216,7 +249,11 @@ export const PlayPauseButton = ({
 
 	return (
 		<View style={[{ height: iconSize }, style]}>
-			<TouchableOpacity activeOpacity={0.85} onPress={togglePlayPause}>
+			<TouchableOpacity
+				activeOpacity={0.85}
+				onPress={togglePlayPause}
+				hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+			>
 				{isPlaying ? (
 					<PauseIcon size={iconSize} color={"#171f21"} />
 				) : (
@@ -232,6 +269,7 @@ export const SkipToNextButton = ({ iconSize = 40 }: PlayerControlsProps) => {
 		<TouchableOpacity
 			activeOpacity={0.7}
 			onPress={() => AudioService.skipToNext()}
+			hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
 		>
 			<FastForwardIcon size={iconSize} color={"#171f21"} />
 		</TouchableOpacity>
@@ -245,6 +283,7 @@ export const SkipToPreviousButton = ({
 		<TouchableOpacity
 			activeOpacity={0.7}
 			onPress={() => AudioService.skipToPrevious()}
+			hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
 		>
 			<RewindIcon size={iconSize} color={"#171f21"} />
 		</TouchableOpacity>
