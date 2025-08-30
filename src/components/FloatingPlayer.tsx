@@ -51,9 +51,9 @@ export const FloatingPlayer = ({ style }: ViewProps) => {
 				</View>
 
 				<View style={floatingPlayerStyles.songControlsContainer}>
-					<PlayPauseButton iconSize={24} />
+					<PlayPauseButton iconSize={32} />
 
-					<SkipToNextButton iconSize={24} />
+					<SkipToNextButton iconSize={32} />
 				</View>
 			</TouchableOpacity>
 
