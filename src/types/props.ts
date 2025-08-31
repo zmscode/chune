@@ -1,6 +1,13 @@
 import { QueueType, Song } from "@/types";
-import { StyleProps } from "react-native-reanimated";
-import { FlatListProps, ViewStyle } from "react-native";
+import { ReactNode } from "react";
+import { Easing, StyleProps } from "react-native-reanimated";
+import {
+	FlatListProps,
+	ViewStyle,
+	TextProps,
+	StyleProp,
+	TextStyle,
+} from "react-native";
 
 export type SideScrollingTextProps = {
 	text: string;
@@ -26,4 +33,13 @@ export type SongListItemProps = {
 	onSongSelect: (song: Song) => void;
 	isPlaying?: boolean;
 	isActiveQueue?: boolean;
+};
+
+export type MarqueeTextProps = {
+	children: ReactNode;
+	style?: TextStyle;
+	containerStyle?: ViewStyle;
+	delayms?: number;
+	durationms?: number;
+	spacing?: number;
 };

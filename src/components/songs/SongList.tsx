@@ -1,14 +1,14 @@
-import { SongListProps } from "@/props";
-import { FlatList, View, Text } from "react-native";
-import { Song } from "@/types";
 import { ItemDivider } from "@/components/custom/ItemDivider";
-import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
-import { useDeviceStore } from "@/stores/globalStore";
-import { memo, useCallback } from "react";
-import AudioService from "@/core/AudioService";
-import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
 import { SongListItem } from "@/components/songs/SongListItem";
+import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
+import AudioService from "@/core/AudioService";
+import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
+import { SongListProps } from "@/props";
+import { useDeviceStore } from "@/stores/globalStore";
+import { Song } from "@/types";
 import { Image } from "expo-image";
+import { memo, useCallback } from "react";
+import { FlatList, Text, View } from "react-native";
 
 export const SongList = ({
 	id,
@@ -20,24 +20,28 @@ export const SongList = ({
 }: SongListProps) => {
 	const { currentSong } = useAudioPlayer();
 
-	const handleSongSelect = useCallback(async (selectedSong: Song) => {
-		try {
-			await AudioService.initialize();
-			
-			// Set the queue and find the selected song's index
-			AudioService.setQueue(songs);
-			const selectedIndex = songs.findIndex(song => song.id === selectedSong.id);
-			
-			if (selectedIndex >= 0) {
-				await AudioService.playSongAt(selectedIndex);
-			} else {
-				await AudioService.loadSong(selectedSong);
-				await AudioService.play();
+	const handleSongSelect = useCallback(
+		async (selectedSong: Song) => {
+			try {
+				await AudioService.initialize();
+
+				AudioService.setQueue(songs);
+				const selectedIndex = songs.findIndex(
+					(song) => song.id === selectedSong.id
+				);
+
+				if (selectedIndex >= 0) {
+					await AudioService.playSongAt(selectedIndex);
+				} else {
+					await AudioService.loadSong(selectedSong);
+					await AudioService.play();
+				}
+			} catch (error) {
+				console.error("Error playing song:", error);
 			}
-		} catch (error) {
-			console.error("Error playing song:", error);
-		}
-	}, [songs]);
+		},
+		[songs]
+	);
 
 	/* ListHeaderComponent={
 		!hideQueueControls ? (

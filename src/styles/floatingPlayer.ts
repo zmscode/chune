@@ -4,6 +4,7 @@ export const floatingPlayerStyles = StyleSheet.create({
 	container: {
 		flexDirection: "row",
 		alignItems: "center",
+		justifyContent: "space-between",
 		backgroundColor: "#b8b8b8",
 		padding: 8,
 		borderRadius: 12,
@@ -18,6 +19,7 @@ export const floatingPlayerStyles = StyleSheet.create({
 		flex: 1,
 		overflow: "hidden",
 		marginLeft: 10,
+		justifyContent: "center",
 	},
 	songTitle: {
 		fontSize: 18,
@@ -28,8 +30,8 @@ export const floatingPlayerStyles = StyleSheet.create({
 	songControlsContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		columnGap: 20,
-		marginRight: 16,
-		paddingLeft: 16,
+		columnGap: 12,
+		flexShrink: 0,
+		paddingRight: 16,
 	},
 });

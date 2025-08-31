@@ -1,4 +1,3 @@
-import { SideScrollingText } from "@/components/custom/SideScrollingText";
 import { PlayerProgressBar } from "@/components/player/PlayerProgressBar";
 import { PlayerRepeatToggle } from "@/components/player/PlayerRepeatToggle";
 import { PlayerShuffleToggle } from "@/components/player/PlayerShuffleToggle";
@@ -142,15 +141,18 @@ export const PlayerScreen = () => {
 								marginRight: 12,
 							}}
 						>
-							<SideScrollingText
-								text={currentSong?.title || "Unknown Title"}
-								animationThreshold={30}
+							<MarqueeText
 								style={{
 									color: "#171f21",
 									fontSize: 24,
 									fontWeight: "700",
 								}}
-							/>
+								delayms={2000}
+								durationms={5000}
+								spacing={30}
+							>
+								{currentSong?.title || "Unknown Title"}
+							</MarqueeText>
 						</View>
 
 						<TouchableOpacity

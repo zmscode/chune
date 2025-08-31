@@ -1,8 +1,8 @@
-import { Song, RepeatMode } from "@/types";
-import { AudioStatus } from "expo-audio";
 import AudioService from "@/core/AudioService";
-import { useCallback, useEffect } from "react";
 import { useAudioStore } from "@/stores/audioStore";
+import { RepeatMode, Song } from "@/types";
+import { AudioStatus } from "expo-audio";
+import { useCallback, useEffect } from "react";
 
 export const useAudioPlayer = () => {
 	const {
@@ -25,8 +25,7 @@ export const useAudioPlayer = () => {
 
 	useEffect(() => {
 		AudioService.initialize();
-		
-		// Sync AudioService with current store state
+
 		AudioService.setRepeatMode(repeatMode);
 
 		const handleStatusUpdate = (status: AudioStatus) => {
@@ -71,7 +70,14 @@ export const useAudioPlayer = () => {
 			AudioService.off("volumeUpdate", handleVolumeUpdate);
 			AudioService.off("repeatModeUpdate", handleRepeatModeUpdate);
 		};
-	}, [setCurrentSong, setQueue, setPlaybackStatus, setVolume, setRepeatMode, repeatMode]);
+	}, [
+		setCurrentSong,
+		setQueue,
+		setPlaybackStatus,
+		setVolume,
+		setRepeatMode,
+		repeatMode,
+	]);
 
 	const play = useCallback(async () => {
 		await AudioService.play();
@@ -121,10 +127,13 @@ export const useAudioPlayer = () => {
 		await AudioService.setVolume(volumeLevel);
 	}, []);
 
-	const setRepeatModeCallback = useCallback((mode: RepeatMode) => {
-		setRepeatMode(mode);
-		AudioService.setRepeatMode(mode);
-	}, [setRepeatMode]);
+	const setRepeatModeCallback = useCallback(
+		(mode: RepeatMode) => {
+			setRepeatMode(mode);
+			AudioService.setRepeatMode(mode);
+		},
+		[setRepeatMode]
+	);
 
 	const toggleShuffleCallback = useCallback(() => {
 		toggleShuffle();

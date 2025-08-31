@@ -1,15 +1,15 @@
 import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
+import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
+import { sheets } from "@/sheets/sheetManager";
 import { floatingPlayerStyles } from "@/styles/floatingPlayer";
-import { TouchableOpacity, ViewProps, View } from "react-native";
-import { SideScrollingText } from "@/components/custom/SideScrollingText";
+import { Image } from "expo-image";
+import { TouchableOpacity, View, ViewProps } from "react-native";
+import AutoScroll, { AnimationMode } from "rn-marquee-text";
 import {
 	PlayPauseButton,
 	SkipToNextButton,
 	PlayerScreen,
 } from "@/components/player/PlayerScreen";
-import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
-import { sheets } from "@/sheets/sheetManager";
-import { Image } from "expo-image";
 
 export const FloatingPlayer = ({ style }: ViewProps) => {
 	const { currentSong } = useAudioPlayer();
@@ -42,12 +42,20 @@ export const FloatingPlayer = ({ style }: ViewProps) => {
 					}}
 				/>
 
-				<View>
-					<SideScrollingText
+				<View
+					style={[
+						floatingPlayerStyles.songTitleContainer,
+						{ flex: 1, marginRight: 8, justifyContent: "center" },
+					]}
+				>
+					<MarqueeText
 						style={floatingPlayerStyles.songTitle}
-						text={currentSong.title ?? ""}
-						animationThreshold={25}
-					/>
+						delayms={2000}
+						durationms={5000}
+						spacing={30}
+					>
+						{currentSong.title ?? ""}
+					</MarqueeText>
 				</View>
 
 				<View style={floatingPlayerStyles.songControlsContainer}>

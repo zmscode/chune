@@ -9,6 +9,7 @@ class AudioService {
 	private listeners: Map<string, Set<Function>> = new Map();
 	private volume: number = 1.0;
 	private repeatMode: RepeatMode = "off";
+	private isSkippingTrack: boolean = false;
 
 	async initialize(): Promise<void> {
 		if (this.isInitialized) return;
@@ -17,7 +18,9 @@ class AudioService {
 			this.player = createAudioPlayer(null);
 
 			this.player.addListener("playbackStatusUpdate", (status) => {
-				this.emit("statusUpdate", status);
+				if (!this.isSkippingTrack) {
+					this.emit("statusUpdate", status);
+				}
 
 				if (status.didJustFinish) {
 					this.handleSongEnd();
@@ -56,24 +59,11 @@ class AudioService {
 			const audioSource: AudioSource = { uri: audioUrl };
 
 			if (!this.player) {
-				const updateInterval = 500;
-				this.player = new AudioPlayer(audioSource, updateInterval);
+				await this.initialize();
+			}
 
-				this.player.addListener("playbackStatusUpdate", (status) => {
-					this.emit("statusUpdate", status);
-
-					if (status.didJustFinish) {
-						this.handleSongEnd();
-					}
-				});
-
-				// Note: expo-audio AudioPlayer doesn't support setVolumeAsync
-				// Volume will be managed by the component state
-
-				this.isInitialized = true;
-			} else {
+			if (this.player) {
 				this.player.replace(audioSource);
-				// Note: expo-audio AudioPlayer doesn't support setVolumeAsync
 			}
 
 			this.emit("trackChange", song);
@@ -132,9 +122,13 @@ class AudioService {
 
 	async playSongAt(index: number): Promise<void> {
 		if (index >= 0 && index < this.queue.length) {
+			this.isSkippingTrack = true;
 			this.currentIndex = index;
 			await this.loadSong(this.queue[index]);
-			await this.play();
+			this.play();
+			setTimeout(() => {
+				this.isSkippingTrack = false;
+			}, 200);
 		}
 	}
 
@@ -145,10 +139,14 @@ class AudioService {
 
 		if (repeatMode === "song") {
 			const wasPlaying = this.player?.currentStatus?.playing || false;
-			await this.seek(0);
+			this.isSkippingTrack = true;
+			this.seek(0);
 			if (wasPlaying) {
-				await this.play();
+				this.play();
 			}
+			setTimeout(() => {
+				this.isSkippingTrack = false;
+			}, 100);
 			return;
 		}
 
@@ -175,10 +173,14 @@ class AudioService {
 
 		if (repeatMode === "song") {
 			const wasPlaying = this.player?.currentStatus?.playing || false;
-			await this.seek(0);
+			this.isSkippingTrack = true;
+			this.seek(0);
 			if (wasPlaying) {
-				await this.play();
+				this.play();
 			}
+			setTimeout(() => {
+				this.isSkippingTrack = false;
+			}, 100);
 			return;
 		}
 
@@ -272,9 +274,6 @@ class AudioService {
 		}
 
 		this.volume = volumeLevel;
-
-		// Note: expo-audio AudioPlayer doesn't support setVolumeAsync directly
-		// This will be managed through the component state and UI feedback
 
 		this.emit("volumeUpdate", this.volume);
 	}
