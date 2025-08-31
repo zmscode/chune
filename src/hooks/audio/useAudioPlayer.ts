@@ -25,6 +25,9 @@ export const useAudioPlayer = () => {
 
 	useEffect(() => {
 		AudioService.initialize();
+		
+		// Sync AudioService with current store state
+		AudioService.setRepeatMode(repeatMode);
 
 		const handleStatusUpdate = (status: AudioStatus) => {
 			setPlaybackStatus({
@@ -68,7 +71,7 @@ export const useAudioPlayer = () => {
 			AudioService.off("volumeUpdate", handleVolumeUpdate);
 			AudioService.off("repeatModeUpdate", handleRepeatModeUpdate);
 		};
-	}, []);
+	}, [setCurrentSong, setQueue, setPlaybackStatus, setVolume, setRepeatMode, repeatMode]);
 
 	const play = useCallback(async () => {
 		await AudioService.play();
@@ -119,11 +122,13 @@ export const useAudioPlayer = () => {
 	}, []);
 
 	const setRepeatModeCallback = useCallback((mode: RepeatMode) => {
+		setRepeatMode(mode);
 		AudioService.setRepeatMode(mode);
-	}, []);
+	}, [setRepeatMode]);
 
 	const toggleShuffleCallback = useCallback(() => {
 		toggleShuffle();
+		AudioService.shuffleQueue(true);
 	}, [toggleShuffle]);
 
 	return {

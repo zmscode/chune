@@ -1,5 +1,16 @@
 import { Song } from "@/types";
 import libraryData from "@/assets/data/library.json";
+import { useDeviceStore } from "@/stores/globalStore";
+import { Image, ImageSourcePropType } from "react-native";
+
+export const getImageUri = (imageSource: ImageSourcePropType): string => {
+	const { isMobile } = useDeviceStore.getState();
+	if (isMobile) {
+		const resolved = Image.resolveAssetSource(imageSource);
+		return resolved?.uri || "";
+	}
+	return typeof imageSource === "string" ? imageSource : "";
+};
 
 export const formatTime = (seconds: number): string => {
 	if (!seconds || seconds === 0) return "0:00";

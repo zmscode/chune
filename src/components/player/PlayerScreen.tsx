@@ -1,8 +1,24 @@
+import { SideScrollingText } from "@/components/custom/SideScrollingText";
+import { PlayerProgressBar } from "@/components/player/PlayerProgressBar";
+import { PlayerRepeatToggle } from "@/components/player/PlayerRepeatToggle";
+import { PlayerShuffleToggle } from "@/components/player/PlayerShuffleToggle";
+import { PlayerVolumeBar } from "@/components/player/PlayerVolumeBar";
+import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
 import AudioService from "@/core/AudioService";
 import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
 import { PlayerControlsProps } from "@/props";
 import { useDeviceStore } from "@/stores/globalStore";
 import { playerControlsStyles } from "@/styles/playerControls";
+import { Image } from "expo-image";
+import { useState } from "react";
+import {
+	ActivityIndicator,
+	Text,
+	TouchableOpacity,
+	View
+	} from "react-native";
+import ActionSheet from "react-native-actions-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
 	FastForwardIcon,
 	HeartIcon,
@@ -10,17 +26,6 @@ import {
 	PlayIcon,
 	RewindIcon,
 } from "phosphor-react-native";
-import { useState } from "react";
-import { ActivityIndicator, TouchableOpacity, Text, View } from "react-native";
-import ActionSheet from "react-native-actions-sheet";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SideScrollingText } from "@/components/custom/SideScrollingText";
-import FastImage from "react-native-fast-image";
-import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
-import { PlayerProgressBar } from "@/components/player/PlayerProgressBar";
-import { PlayerVolumeBar } from "@/components/player/PlayerVolumeBar";
-import { PlayerRepeatToggle } from "@/components/player/PlayerRepeatToggle";
-import { PlayerShuffleToggle } from "@/components/player/PlayerShuffleToggle";
 
 export const PlayerScreen = () => {
 	const { currentSong, isLoading } = useAudioPlayer();
@@ -103,14 +108,13 @@ export const PlayerScreen = () => {
 							borderRadius: 12,
 						}}
 					>
-						<FastImage
+						<Image
 							source={{
 								uri:
 									currentSong?.artwork ??
 									UNKNOWN_SONG_IMAGE_URI,
-								priority: FastImage.priority.high,
 							}}
-							resizeMode="cover"
+							contentFit="cover"
 							style={{
 								width: height * 0.38,
 								height: height * 0.38,
@@ -122,7 +126,6 @@ export const PlayerScreen = () => {
 					</View>
 				</View>
 
-				{/* Song Title and Artist */}
 				<View style={{ marginBottom: 40 }}>
 					<View
 						style={{
@@ -182,12 +185,10 @@ export const PlayerScreen = () => {
 					)}
 				</View>
 
-				{/* Progress Bar */}
 				<View style={{ marginBottom: 40 }}>
 					<PlayerProgressBar />
 				</View>
 
-				{/* Playback Controls */}
 				<View
 					style={[
 						playerControlsStyles.container,
@@ -215,12 +216,10 @@ export const PlayerScreen = () => {
 					</View>
 				</View>
 
-				{/* Volume Bar */}
 				<View style={{ marginBottom: 40 }}>
 					<PlayerVolumeBar />
 				</View>
 
-				{/* Shuffle and Repeat */}
 				<View
 					style={{
 						flexDirection: "row",
@@ -229,7 +228,9 @@ export const PlayerScreen = () => {
 					}}
 				>
 					<PlayerShuffleToggle />
+
 					<View style={{ width: 80 }} />
+
 					<PlayerRepeatToggle />
 				</View>
 			</View>

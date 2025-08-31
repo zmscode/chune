@@ -1,14 +1,14 @@
 import { SongListProps } from "@/props";
 import { FlatList, View, Text } from "react-native";
-import FastImage from "react-native-fast-image";
 import { Song } from "@/types";
 import { ItemDivider } from "@/components/custom/ItemDivider";
 import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
-import { useActiveQueue, useSetActiveQueue } from "@/stores/queueStore";
+import { useDeviceStore } from "@/stores/globalStore";
 import { memo, useCallback } from "react";
 import AudioService from "@/core/AudioService";
 import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
 import { SongListItem } from "@/components/songs/SongListItem";
+import { Image } from "expo-image";
 
 export const SongList = ({
 	id,
@@ -23,12 +23,21 @@ export const SongList = ({
 	const handleSongSelect = useCallback(async (selectedSong: Song) => {
 		try {
 			await AudioService.initialize();
-			await AudioService.loadSong(selectedSong);
-			await AudioService.play();
+			
+			// Set the queue and find the selected song's index
+			AudioService.setQueue(songs);
+			const selectedIndex = songs.findIndex(song => song.id === selectedSong.id);
+			
+			if (selectedIndex >= 0) {
+				await AudioService.playSongAt(selectedIndex);
+			} else {
+				await AudioService.loadSong(selectedSong);
+				await AudioService.play();
+			}
 		} catch (error) {
 			console.error("Error playing song:", error);
 		}
-	}, []);
+	}, [songs]);
 
 	/* ListHeaderComponent={
 		!hideQueueControls ? (
@@ -60,10 +69,10 @@ export const SongList = ({
 					>
 						No songs found
 					</Text>
-					<FastImage
+
+					<Image
 						source={{
 							uri: UNKNOWN_SONG_IMAGE_URI,
-							priority: FastImage.priority.normal,
 						}}
 						style={{
 							width: 200,

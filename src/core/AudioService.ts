@@ -1,5 +1,5 @@
 import { RepeatMode, Song } from "@/types";
-import { createAudioPlayer, AudioSource, AudioPlayer } from "expo-audio";
+import { AudioPlayer, AudioSource, createAudioPlayer } from "expo-audio";
 
 class AudioService {
 	private player: AudioPlayer | null = null;
@@ -18,6 +18,10 @@ class AudioService {
 
 			this.player.addListener("playbackStatusUpdate", (status) => {
 				this.emit("statusUpdate", status);
+
+				if (status.didJustFinish) {
+					this.handleSongEnd();
+				}
 			});
 
 			this.isInitialized = true;
@@ -57,6 +61,10 @@ class AudioService {
 
 				this.player.addListener("playbackStatusUpdate", (status) => {
 					this.emit("statusUpdate", status);
+
+					if (status.didJustFinish) {
+						this.handleSongEnd();
+					}
 				});
 
 				// Note: expo-audio AudioPlayer doesn't support setVolumeAsync
@@ -87,7 +95,7 @@ class AudioService {
 
 	async seek(positionMillis: number): Promise<void> {
 		if (!this.player) return;
-		await this.player.seekTo(positionMillis);
+		await this.player.seekTo(positionMillis / 1000);
 	}
 
 	setQueue(songs: Song[]): void {
@@ -133,9 +141,18 @@ class AudioService {
 	async skipToNext(): Promise<void> {
 		if (this.queue.length === 0) return;
 
-		let nextIndex = this.currentIndex + 1;
-
 		const repeatMode = this.getRepeatMode();
+
+		if (repeatMode === "song") {
+			const wasPlaying = this.player?.currentStatus?.playing || false;
+			await this.seek(0);
+			if (wasPlaying) {
+				await this.play();
+			}
+			return;
+		}
+
+		let nextIndex = this.currentIndex + 1;
 
 		if (nextIndex >= this.queue.length) {
 			if (repeatMode === "queue") {
@@ -154,14 +171,23 @@ class AudioService {
 		const status = this.player?.currentStatus;
 		const currentPosition = status?.currentTime || 0;
 
-		if (currentPosition > 3000) {
+		const repeatMode = this.getRepeatMode();
+
+		if (repeatMode === "song") {
+			const wasPlaying = this.player?.currentStatus?.playing || false;
+			await this.seek(0);
+			if (wasPlaying) {
+				await this.play();
+			}
+			return;
+		}
+
+		if (currentPosition > 3) {
 			await this.seek(0);
 			return;
 		}
 
 		let previousIndex = this.currentIndex - 1;
-
-		const repeatMode = this.getRepeatMode();
 
 		if (previousIndex < 0) {
 			if (repeatMode === "queue") {
@@ -227,6 +253,17 @@ class AudioService {
 
 	getRepeatModePublic(): RepeatMode {
 		return this.repeatMode;
+	}
+
+	private async handleSongEnd(): Promise<void> {
+		const repeatMode = this.getRepeatMode();
+
+		if (repeatMode === "song") {
+			await this.seek(0);
+			await this.play();
+		} else if (repeatMode === "queue") {
+			await this.skipToNext();
+		}
 	}
 
 	async setVolume(volumeLevel: number): Promise<void> {

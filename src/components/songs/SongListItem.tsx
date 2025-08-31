@@ -5,9 +5,8 @@ import {
 	PauseIcon,
 } from "phosphor-react-native";
 import { Text, TouchableHighlight, View } from "react-native";
-import FastImage from "react-native-fast-image";
 import { SongListItemProps } from "@/props";
-import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
+import { Image } from "expo-image";
 
 export const SongListItem = ({
 	song,
@@ -28,10 +27,9 @@ export const SongListItem = ({
 				}}
 			>
 				<View>
-					<FastImage
+					<Image
 						source={{
 							uri: song.artwork ?? UNKNOWN_SONG_IMAGE_URI,
-							priority: FastImage.priority.normal,
 						}}
 						style={{
 							borderRadius: 8,
