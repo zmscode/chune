@@ -1,9 +1,8 @@
-import { useQueueWithAudio } from "@/stores/queueStore";
-import { generateSongListId } from "@/utils/utility";
-import { View, ScrollView } from "react-native";
 import { SongList } from "@/components/songs/SongList";
+import { generateSongListId } from "@/utils/utility";
 import { loadLibrarySongs } from "@/utils/utility";
 import { useMemo } from "react";
+import { ScrollView, View } from "react-native";
 
 const SongsScreen = () => {
 	const songs = useMemo(() => loadLibrarySongs(), []);

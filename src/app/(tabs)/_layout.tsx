@@ -1,13 +1,11 @@
-import { FloatingPlayer } from "@/components/FloatingPlayer";
+import { FloatingPlayer } from "@/components/player/FloatingPlayer";
 import { Tabs } from "expo-router";
-import { HeartIcon, PlaylistIcon } from "phosphor-react-native";
+import { HeartIcon, MusicNoteIcon, PlaylistIcon } from "phosphor-react-native";
 
 const TabsNavigation = () => {
 	return (
 		<>
 			<Tabs
-				initialRouteName="(songs)"
-				backBehavior="firstRoute"
 				screenOptions={{
 					tabBarActiveTintColor: "#91dc6e",
 					tabBarLabelStyle: {
@@ -30,13 +28,23 @@ const TabsNavigation = () => {
 					options={{
 						title: "Songs",
 						tabBarIcon: ({ color }: { color: string }) => (
+							<MusicNoteIcon size={24} color={color} />
+						),
+					}}
+				/>
+
+				<Tabs.Screen
+					name="favourites"
+					options={{
+						title: "Favourites",
+						tabBarIcon: ({ color }: { color: string }) => (
 							<HeartIcon size={24} color={color} />
 						),
 					}}
 				/>
 
 				<Tabs.Screen
-					name="(playlists)"
+					name="playlists"
 					options={{
 						title: "Playlists",
 						tabBarIcon: ({ color }: { color: string }) => (
