@@ -7,6 +7,7 @@ const TabsNavigation = () => {
 		<>
 			<Tabs
 				initialRouteName="(songs)"
+				backBehavior="firstRoute"
 				screenOptions={{
 					tabBarActiveTintColor: "#91dc6e",
 					tabBarLabelStyle: {

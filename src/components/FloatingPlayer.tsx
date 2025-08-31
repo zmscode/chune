@@ -4,7 +4,7 @@ import { sheets } from "@/sheets/sheetManager";
 import { floatingPlayerStyles } from "@/styles/floatingPlayer";
 import { Image } from "expo-image";
 import { TouchableOpacity, View, ViewProps } from "react-native";
-import AutoScroll, { AnimationMode } from "rn-marquee-text";
+import TextTicker from "react-native-text-ticker";
 import {
 	PlayPauseButton,
 	SkipToNextButton,
@@ -48,14 +48,16 @@ export const FloatingPlayer = ({ style }: ViewProps) => {
 						{ flex: 1, marginRight: 8, justifyContent: "center" },
 					]}
 				>
-					<MarqueeText
+					<TextTicker
 						style={floatingPlayerStyles.songTitle}
-						delayms={2000}
-						durationms={5000}
-						spacing={30}
+						duration={3000}
+						loop
+						bounce
+						repeatSpacer={50}
+						marqueeDelay={1000}
 					>
 						{currentSong.title ?? ""}
-					</MarqueeText>
+					</TextTicker>
 				</View>
 
 				<View style={floatingPlayerStyles.songControlsContainer}>

@@ -18,6 +18,7 @@ import {
 	} from "react-native";
 import ActionSheet from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import TextTicker from "react-native-text-ticker";
 import {
 	FastForwardIcon,
 	HeartIcon,
@@ -141,18 +142,20 @@ export const PlayerScreen = () => {
 								marginRight: 12,
 							}}
 						>
-							<MarqueeText
+							<TextTicker
 								style={{
 									color: "#171f21",
 									fontSize: 24,
 									fontWeight: "700",
 								}}
-								delayms={2000}
-								durationms={5000}
-								spacing={30}
+								duration={3000}
+								loop
+								bounce
+								repeatSpacer={50}
+								marqueeDelay={1000}
 							>
 								{currentSong?.title || "Unknown Title"}
-							</MarqueeText>
+							</TextTicker>
 						</View>
 
 						<TouchableOpacity
