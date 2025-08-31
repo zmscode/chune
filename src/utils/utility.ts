@@ -1,6 +1,6 @@
-import { Song } from "@/types";
 import libraryData from "@/assets/data/library.json";
 import { useDeviceStore } from "@/stores/globalStore";
+import { Song } from "@/types";
 import { Image, ImageSourcePropType } from "react-native";
 
 export const getImageUri = (imageSource: ImageSourcePropType): string => {

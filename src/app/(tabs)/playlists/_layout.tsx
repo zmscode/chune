@@ -12,6 +12,18 @@ const PlaylistsScreenLayout = () => {
 						headerTitle: "Playlists",
 					}}
 				/>
+
+				<Stack.Screen
+					name="[name]"
+					options={{
+						headerTitle: "",
+						headerBackVisible: true,
+						headerStyle: {
+							backgroundColor: "#eeeeee",
+						},
+						headerTintColor: "#171f21",
+					}}
+				/>
 			</Stack>
 		</View>
 	);

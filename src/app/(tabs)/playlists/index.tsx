@@ -1,39 +1,35 @@
-import { useMemo } from "react";
-import { Text, FlatList, TouchableOpacity } from "react-native";
-import { getAllPlaylists, getPlaylistSongs } from "@/utils/utility";
+import { PlaylistList } from "@/components/playlists/PlaylistList";
 import { useRouter } from "expo-router";
+import { useCallback } from "react";
+import { ScrollView, View } from "react-native";
 
 const PlaylistsScreen = () => {
 	const router = useRouter();
-	const playlists = useMemo(() => getAllPlaylists(), []);
+
+	const handlePlaylistSelect = useCallback(
+		(playlistName: string) => {
+			router.push(`/playlists/${encodeURIComponent(playlistName)}`);
+		},
+		[router]
+	);
 
 	return (
-		<FlatList
-			data={playlists}
-			keyExtractor={(item) => item}
-			renderItem={({ item }) => {
-				const songCount = getPlaylistSongs(item).length;
-				return (
-					<TouchableOpacity
-						onPress={() =>
-							router.push(`/playlist/${encodeURIComponent(item)}`)
-						}
-						style={{
-							padding: 16,
-							borderBottomWidth: 1,
-							borderBottomColor: "#eee",
-						}}
-					>
-						<Text style={{ fontSize: 18, fontWeight: "600" }}>
-							{item}
-						</Text>
-						<Text style={{ fontSize: 14, color: "#666" }}>
-							{songCount} songs
-						</Text>
-					</TouchableOpacity>
-				);
+		<View
+			style={{
+				flex: 1,
+				backgroundColor: "#eeeeee",
 			}}
-		/>
+		>
+			<ScrollView
+				contentInsetAdjustmentBehavior="automatic"
+				style={{ paddingHorizontal: 24 }}
+			>
+				<PlaylistList
+					scrollEnabled={false}
+					onPlaylistSelect={handlePlaylistSelect}
+				/>
+			</ScrollView>
+		</View>
 	);
 };
 

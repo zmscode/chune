@@ -35,11 +35,13 @@ export type SongListItemProps = {
 	isActiveQueue?: boolean;
 };
 
-export type MarqueeTextProps = {
-	children: ReactNode;
-	style?: TextStyle;
-	containerStyle?: ViewStyle;
-	delayms?: number;
-	durationms?: number;
-	spacing?: number;
+export type PlaylistListProps = Partial<FlatListProps<string>> & {
+	onPlaylistSelect?: (playlistName: string) => void;
+	hideEmptyPlaylists?: boolean;
+};
+
+export type PlaylistListItemProps = {
+	playlistName: string;
+	onPlaylistSelect: (playlistName: string) => void;
+	showSongCount?: boolean;
 };
