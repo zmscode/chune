@@ -5,31 +5,33 @@ class AudioService {
 	private player: AudioPlayer | null = null;
 	private queue: Array<Song> = [];
 	private currentIndex: number = -1;
-	private isInitialized = false;
+	private isInitialised = false;
 	private listeners: Map<string, Set<Function>> = new Map();
 	private volume: number = 1.0;
 	private repeatMode: RepeatMode = "off";
 	private isSkippingTrack: boolean = false;
+	private isSeeking: boolean = false;
+	private lastSeekTime: number = 0;
 
-	async initialize(): Promise<void> {
-		if (this.isInitialized) return;
+	async initialise(): Promise<void> {
+		if (this.isInitialised) return;
 
 		try {
 			this.player = createAudioPlayer(null);
 
 			this.player.addListener("playbackStatusUpdate", (status) => {
-				if (!this.isSkippingTrack) {
+				if (!this.isSkippingTrack && !this.isSeeking) {
 					this.emit("statusUpdate", status);
 				}
 
-				if (status.didJustFinish) {
+				if (status.didJustFinish && !this.isSkippingTrack) {
 					this.handleSongEnd();
 				}
 			});
 
-			this.isInitialized = true;
+			this.isInitialised = true;
 		} catch (error) {
-			console.error("Failed to initialize AudioService:", error);
+			console.error("Failed to initialise AudioService:", error);
 			throw error;
 		}
 	}
@@ -59,11 +61,14 @@ class AudioService {
 			const audioSource: AudioSource = { uri: audioUrl };
 
 			if (!this.player) {
-				await this.initialize();
+				await this.initialise();
 			}
 
 			if (this.player) {
 				this.player.replace(audioSource);
+				if (this.volume !== 1.0) {
+					this.player.volume = this.volume;
+				}
 			}
 
 			this.emit("trackChange", song);
@@ -85,7 +90,30 @@ class AudioService {
 
 	async seek(positionMillis: number): Promise<void> {
 		if (!this.player) return;
-		await this.player.seekTo(positionMillis / 1000);
+
+		const now = Date.now();
+		if (now - this.lastSeekTime < 50) return;
+		this.lastSeekTime = now;
+
+		this.isSeeking = true;
+
+		try {
+			await this.player.seekTo(positionMillis / 1000);
+
+			const status = this.player.currentStatus;
+			if (status) {
+				this.emit("statusUpdate", {
+					...status,
+					currentTime: positionMillis / 1000,
+				});
+			}
+		} catch (error) {
+			console.error("Error seeking:", error);
+		} finally {
+			setTimeout(() => {
+				this.isSeeking = false;
+			}, 100);
+		}
 	}
 
 	setQueue(songs: Array<Song>): void {
@@ -125,7 +153,7 @@ class AudioService {
 			this.isSkippingTrack = true;
 			this.currentIndex = index;
 			await this.loadSong(this.queue[index]);
-			this.play();
+			await this.play();
 			setTimeout(() => {
 				this.isSkippingTrack = false;
 			}, 200);
@@ -140,9 +168,9 @@ class AudioService {
 		if (repeatMode === "song") {
 			const wasPlaying = this.player?.currentStatus?.playing || false;
 			this.isSkippingTrack = true;
-			this.seek(0);
+			await this.seek(0);
 			if (wasPlaying) {
-				this.play();
+				await this.play();
 			}
 			setTimeout(() => {
 				this.isSkippingTrack = false;
@@ -174,9 +202,9 @@ class AudioService {
 		if (repeatMode === "song") {
 			const wasPlaying = this.player?.currentStatus?.playing || false;
 			this.isSkippingTrack = true;
-			this.seek(0);
+			await this.seek(0);
 			if (wasPlaying) {
-				this.play();
+				await this.play();
 			}
 			setTimeout(() => {
 				this.isSkippingTrack = false;
@@ -263,17 +291,29 @@ class AudioService {
 		if (repeatMode === "song") {
 			await this.seek(0);
 			await this.play();
-		} else if (repeatMode === "queue") {
+		} else if (
+			repeatMode === "queue" ||
+			this.currentIndex < this.queue.length - 1
+		) {
 			await this.skipToNext();
 		}
 	}
 
 	async setVolume(volumeLevel: number): Promise<void> {
 		if (volumeLevel < 0 || volumeLevel > 1) {
-			throw new Error("Volume must be between 0 and 1");
+			console.warn("Volume must be between 0 and 1, clamping value");
+			volumeLevel = Math.max(0, Math.min(1, volumeLevel));
 		}
 
 		this.volume = volumeLevel;
+
+		if (this.player) {
+			try {
+				this.player.volume = volumeLevel;
+			} catch (error) {
+				console.error("Error setting volume:", error);
+			}
+		}
 
 		this.emit("volumeUpdate", this.volume);
 	}
@@ -289,7 +329,7 @@ class AudioService {
 		}
 		this.queue = [];
 		this.currentIndex = -1;
-		this.isInitialized = false;
+		this.isInitialised = false;
 		this.listeners.clear();
 	}
 }

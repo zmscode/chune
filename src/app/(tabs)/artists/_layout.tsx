@@ -10,6 +10,7 @@ const ArtistsScreenLayout = () => {
 					options={{
 						headerTransparent: true,
 						headerTitle: "Artists",
+						headerShown: false,
 					}}
 				/>
 

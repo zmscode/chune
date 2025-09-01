@@ -1,8 +1,9 @@
+import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
 import { formatTime } from "@/utils/utility";
+import { useEffect, useRef } from "react";
 import { Text, View, ViewProps } from "react-native";
 import { Slider } from "react-native-awesome-slider";
 import { useSharedValue } from "react-native-reanimated";
-import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
 
 export const PlayerProgressBar = ({ style }: ViewProps) => {
 	const { position, duration, seek } = useAudioPlayer();
@@ -12,11 +13,38 @@ export const PlayerProgressBar = ({ style }: ViewProps) => {
 	const min = useSharedValue(0);
 	const max = useSharedValue(1);
 
+	const lastSeekTime = useRef(0);
+	const pendingSeek = useRef<number | null>(null);
+	const seekTimeout = useRef<NodeJS.Timeout | null>(null);
+
+	useEffect(() => {
+		if (!isSliding.value && duration > 0) {
+			progress.value = position / duration;
+		}
+	}, [position, duration, isSliding.value]);
+
 	const trackElapsedTime = formatTime(position / 1000);
 	const trackRemainingTime = formatTime((duration - position) / 1000);
 
-	if (!isSliding.value)
-		progress.value = duration > 0 ? position / duration : 0;
+	const handleSeek = async (value: number) => {
+		const now = Date.now();
+		const targetPosition = value * duration;
+
+		if (seekTimeout.current) {
+			clearTimeout(seekTimeout.current);
+		}
+
+		pendingSeek.current = targetPosition;
+
+		seekTimeout.current = setTimeout(async () => {
+			if (pendingSeek.current !== null) {
+				await seek(pendingSeek.current);
+				pendingSeek.current = null;
+			}
+		}, 50);
+
+		lastSeekTime.current = now;
+	};
 
 	return (
 		<View style={style}>
@@ -31,19 +59,18 @@ export const PlayerProgressBar = ({ style }: ViewProps) => {
 				thumbWidth={0}
 				renderBubble={() => null}
 				theme={{
-					minimumTrackTintColor: "rgba(43, 46, 47, 0.4)",
-					maximumTrackTintColor: "rgba(43, 46, 47, 0.6)",
+					minimumTrackTintColor: "#91dc6e",
+					maximumTrackTintColor: "rgba(43, 46, 47, 0.3)",
 				}}
-				onSlidingStart={() => (isSliding.value = true)}
-				onValueChange={async (value) => {
-					await seek(value * duration);
+				onSlidingStart={() => {
+					isSliding.value = true;
+				}}
+				onValueChange={(value) => {
+					progress.value = value;
 				}}
 				onSlidingComplete={async (value) => {
-					if (!isSliding.value) return;
-
 					isSliding.value = false;
-
-					await seek(value * duration);
+					await handleSeek(value);
 				}}
 			/>
 
@@ -76,7 +103,7 @@ export const PlayerProgressBar = ({ style }: ViewProps) => {
 						fontWeight: "500",
 					}}
 				>
-					{trackRemainingTime}
+					-{trackRemainingTime}
 				</Text>
 			</View>
 		</View>

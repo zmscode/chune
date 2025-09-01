@@ -31,48 +31,101 @@ const FavouritesScreen = () => {
 				style={{
 					flex: 1,
 					backgroundColor: "#eeeeee",
-					justifyContent: "center",
-					alignItems: "center",
-					paddingHorizontal: 40,
+					paddingTop: Constants.statusBarHeight,
 				}}
 			>
 				<View
 					style={{
-						width: 120,
-						height: 120,
-						borderRadius: 60,
-						backgroundColor: "#f8637020",
-						justifyContent: "center",
+						flexDirection: "row",
 						alignItems: "center",
-						marginBottom: 24,
+						paddingHorizontal: 24,
+						paddingVertical: 16,
+						backgroundColor: "#eeeeee",
+						borderBottomWidth: 1,
+						borderBottomColor: "#d9d9d9",
 					}}
 				>
-					<HeartIcon size={60} color="#f86370" />
+					<View
+						style={{
+							width: 40,
+							height: 40,
+							borderRadius: 20,
+							backgroundColor: "#f8637020",
+							justifyContent: "center",
+							alignItems: "center",
+							marginRight: 12,
+						}}
+					>
+						<HeartIcon size={24} color="#f86370" />
+					</View>
+					<View style={{ flex: 1 }}>
+						<Text
+							style={{
+								fontSize: 28,
+								fontWeight: "700",
+								color: "#171f21",
+							}}
+						>
+							Favourites
+						</Text>
+						<Text
+							style={{
+								fontSize: 14,
+								color: "#2d3538",
+								marginTop: 2,
+							}}
+						>
+							No favourites yet
+						</Text>
+					</View>
 				</View>
 
-				<Text
+				<View
 					style={{
-						fontSize: 24,
-						fontWeight: "700",
-						color: "#171f21",
-						marginBottom: 12,
+						flex: 1,
+						justifyContent: "center",
+						alignItems: "center",
+						paddingHorizontal: 40,
+						marginTop: -60,
 					}}
 				>
-					{"No Favourites Yet"}
-				</Text>
+					<View
+						style={{
+							width: 120,
+							height: 120,
+							borderRadius: 60,
+							backgroundColor: "#f8637020",
+							justifyContent: "center",
+							alignItems: "center",
+							marginBottom: 24,
+						}}
+					>
+						<HeartIcon size={60} color="#f86370" />
+					</View>
 
-				<Text
-					style={{
-						fontSize: 16,
-						color: "#2d3538",
-						textAlign: "center",
-						lineHeight: 22,
-					}}
-				>
-					{
-						"Songs you mark as favourite will appear here. Tap the heart icon on any song to add it to your favourites."
-					}
-				</Text>
+					<Text
+						style={{
+							fontSize: 24,
+							fontWeight: "700",
+							color: "#171f21",
+							marginBottom: 12,
+						}}
+					>
+						No Favourites Yet
+					</Text>
+
+					<Text
+						style={{
+							fontSize: 16,
+							color: "#2d3538",
+							textAlign: "center",
+							lineHeight: 22,
+						}}
+					>
+						Songs you mark as favourite will appear here. Tap the
+						heart icon on any song to add it to your favourites.
+					</Text>
+				</View>
 			</View>
 		);
 	}
@@ -85,107 +138,123 @@ const FavouritesScreen = () => {
 				backgroundColor: "#eeeeee",
 			}}
 		>
-			<ScrollView
-				contentInsetAdjustmentBehavior="automatic"
-				style={{ paddingHorizontal: 24 }}
+			<View
+				style={{
+					paddingHorizontal: 24,
+					paddingVertical: 16,
+					backgroundColor: "#eeeeee",
+					borderBottomWidth: 1,
+					borderBottomColor: "#d9d9d9",
+				}}
 			>
 				<View
 					style={{
-						paddingVertical: 20,
-						borderBottomWidth: 1,
-						borderBottomColor: "#d9d9d9",
-						marginBottom: 10,
+						flexDirection: "row",
+						alignItems: "center",
+						marginBottom: 16,
 					}}
 				>
 					<View
 						style={{
-							flexDirection: "row",
+							width: 40,
+							height: 40,
+							borderRadius: 20,
+							backgroundColor: "#f8637020",
+							justifyContent: "center",
 							alignItems: "center",
-							marginBottom: 20,
+							marginRight: 12,
 						}}
 					>
-						<View style={{ flex: 1 }}>
-							<Text
-								style={{
-									fontSize: 28,
-									fontWeight: "700",
-									color: "#171f21",
-									marginBottom: 4,
-								}}
-							>
-								{"Favourites"}
-							</Text>
-							<Text
-								style={{
-									fontSize: 14,
-									color: "#2d3538",
-								}}
-							>
-								{favouriteCount}{" "}
-								{favouriteCount === 1 ? "song" : "songs"}
-							</Text>
-						</View>
+						<HeartIcon size={24} color="#f86370" />
 					</View>
-					<View
-						style={{
-							flexDirection: "row",
-							gap: 12,
-						}}
-					>
-						<TouchableOpacity
-							onPress={handlePlayFavourites}
-							activeOpacity={0.8}
+					<View style={{ flex: 1 }}>
+						<Text
 							style={{
-								flex: 1,
-								backgroundColor: "#91dc6e",
-								paddingVertical: 12,
-								borderRadius: 24,
-								alignItems: "center",
-								flexDirection: "row",
-								justifyContent: "center",
+								fontSize: 28,
+								fontWeight: "700",
+								color: "#171f21",
 							}}
 						>
-							<PlayIcon size={20} color="#171f21" />
-							<Text
-								style={{
-									color: "#171f21",
-									fontWeight: "600",
-									fontSize: 16,
-									marginLeft: 8,
-								}}
-							>
-								{"Play All"}
-							</Text>
-						</TouchableOpacity>
-
-						<TouchableOpacity
-							onPress={handleShuffleFavourites}
-							activeOpacity={0.8}
+							Favourites
+						</Text>
+						<Text
 							style={{
-								flex: 1,
-								backgroundColor: "#b8b8b8",
-								paddingVertical: 12,
-								borderRadius: 24,
-								alignItems: "center",
-								flexDirection: "row",
-								justifyContent: "center",
+								fontSize: 14,
+								color: "#2d3538",
+								marginTop: 2,
 							}}
 						>
-							<ShuffleIcon size={20} color="#171f21" />
-							<Text
-								style={{
-									color: "#171f21",
-									fontWeight: "600",
-									fontSize: 16,
-									marginLeft: 8,
-								}}
-							>
-								{"Shuffle"}
-							</Text>
-						</TouchableOpacity>
+							{favouriteCount}{" "}
+							{favouriteCount === 1 ? "song" : "songs"}
+						</Text>
 					</View>
 				</View>
 
+				{/* Play Controls */}
+				<View
+					style={{
+						flexDirection: "row",
+						gap: 12,
+					}}
+				>
+					<TouchableOpacity
+						onPress={handlePlayFavourites}
+						activeOpacity={0.8}
+						style={{
+							flex: 1,
+							backgroundColor: "#91dc6e",
+							paddingVertical: 12,
+							borderRadius: 24,
+							alignItems: "center",
+							flexDirection: "row",
+							justifyContent: "center",
+						}}
+					>
+						<PlayIcon size={20} color="#171f21" />
+						<Text
+							style={{
+								color: "#171f21",
+								fontWeight: "600",
+								fontSize: 16,
+								marginLeft: 8,
+							}}
+						>
+							Play All
+						</Text>
+					</TouchableOpacity>
+
+					<TouchableOpacity
+						onPress={handleShuffleFavourites}
+						activeOpacity={0.8}
+						style={{
+							flex: 1,
+							backgroundColor: "#b8b8b8",
+							paddingVertical: 12,
+							borderRadius: 24,
+							alignItems: "center",
+							flexDirection: "row",
+							justifyContent: "center",
+						}}
+					>
+						<ShuffleIcon size={20} color="#171f21" />
+						<Text
+							style={{
+								color: "#171f21",
+								fontWeight: "600",
+								fontSize: 16,
+								marginLeft: 8,
+							}}
+						>
+							Shuffle
+						</Text>
+					</TouchableOpacity>
+				</View>
+			</View>
+
+			<ScrollView
+				contentInsetAdjustmentBehavior="automatic"
+				style={{ paddingHorizontal: 24 }}
+			>
 				<SongList
 					id={generateSongListId("favourites")}
 					songs={favouriteSongs}

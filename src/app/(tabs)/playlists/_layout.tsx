@@ -10,6 +10,7 @@ const PlaylistsScreenLayout = () => {
 					options={{
 						headerTransparent: true,
 						headerTitle: "Playlists",
+						headerShown: false,
 					}}
 				/>
 

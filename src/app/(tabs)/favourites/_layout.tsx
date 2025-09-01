@@ -10,6 +10,7 @@ const FavouritesScreenLayout = () => {
 					options={{
 						headerTransparent: true,
 						headerTitle: "Favourites",
+						headerShown: false,
 					}}
 				/>
 			</Stack>

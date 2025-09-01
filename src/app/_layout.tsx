@@ -19,7 +19,7 @@ SplashScreen.preventAutoHideAsync();
 
 const App = () => {
 	useEffect(() => {
-		AudioService.initialize();
+		AudioService.initialise();
 	}, []);
 	SplashScreen.hideAsync();
 

@@ -10,7 +10,7 @@ export const FavouritesInitialiser = ({
 
 	useEffect(() => {
 		if (!isInitialised) {
-			console.log("Initializing favourites from library.json...");
+			console.log("Initialising favourites from library.json...");
 			initialiseFromLibrary();
 		}
 	}, [isInitialised, initialiseFromLibrary]);

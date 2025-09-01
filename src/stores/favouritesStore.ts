@@ -71,7 +71,7 @@ export const useFavouritesStore = create<FavouritesState>()(
 			storage: createJSONStorage(() => AsyncStorage),
 			partialize: (state) => ({
 				favouriteIds: Array.from(state.favouriteIds),
-				isInitialized: state.isInitialised,
+				isInitialised: state.isInitialised,
 			}),
 			onRehydrateStorage: () => (state) => {
 				if (state) {

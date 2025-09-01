@@ -2,7 +2,7 @@ import AudioService from "@/core/AudioService";
 import { useAudioStore } from "@/stores/audioStore";
 import { RepeatMode, Song } from "@/types";
 import { AudioStatus } from "expo-audio";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 export const useAudioPlayer = () => {
 	const {
@@ -23,12 +23,18 @@ export const useAudioPlayer = () => {
 		isLoading,
 	} = useAudioStore();
 
+	const isMounted = useRef(true);
+
 	useEffect(() => {
-		AudioService.initialize();
+		isMounted.current = true;
+
+		AudioService.initialise();
 
 		AudioService.setRepeatMode(repeatMode);
 
 		const handleStatusUpdate = (status: AudioStatus) => {
+			if (!isMounted.current) return;
+
 			setPlaybackStatus({
 				isLoading: status.isLoaded ? false : true,
 				isPlaying: status.playing,
@@ -42,18 +48,22 @@ export const useAudioPlayer = () => {
 		};
 
 		const handleSongChange = (song: Song) => {
+			if (!isMounted.current) return;
 			setCurrentSong(song);
 		};
 
 		const handleQueueUpdate = (newQueue: Array<Song>) => {
+			if (!isMounted.current) return;
 			setQueue(newQueue);
 		};
 
 		const handleVolumeUpdate = (newVolume: number) => {
+			if (!isMounted.current) return;
 			setVolume(newVolume);
 		};
 
 		const handleRepeatModeUpdate = (mode: RepeatMode) => {
+			if (!isMounted.current) return;
 			setRepeatMode(mode);
 		};
 
@@ -64,6 +74,7 @@ export const useAudioPlayer = () => {
 		AudioService.on("repeatModeUpdate", handleRepeatModeUpdate);
 
 		return () => {
+			isMounted.current = false;
 			AudioService.off("statusUpdate", handleStatusUpdate);
 			AudioService.off("trackChange", handleSongChange);
 			AudioService.off("queueUpdate", handleQueueUpdate);
@@ -80,37 +91,61 @@ export const useAudioPlayer = () => {
 	]);
 
 	const play = useCallback(async () => {
-		await AudioService.play();
+		try {
+			await AudioService.play();
+		} catch (error) {
+			console.error("Error playing:", error);
+		}
 	}, []);
 
 	const pause = useCallback(async () => {
-		await AudioService.pause();
+		try {
+			await AudioService.pause();
+		} catch (error) {
+			console.error("Error pausing:", error);
+		}
 	}, []);
 
-	const seek = useCallback(async (position: number) => {
-		await AudioService.seek(position);
+	const seek = useCallback(async (positionMillis: number) => {
+		try {
+			await AudioService.seek(positionMillis);
+		} catch (error) {
+			console.error("Error seeking:", error);
+		}
 	}, []);
 
 	const skipToNext = useCallback(async () => {
-		await AudioService.skipToNext();
+		try {
+			await AudioService.skipToNext();
+		} catch (error) {
+			console.error("Error skipping to next:", error);
+		}
 	}, []);
 
 	const skipToPrevious = useCallback(async () => {
-		await AudioService.skipToPrevious();
+		try {
+			await AudioService.skipToPrevious();
+		} catch (error) {
+			console.error("Error skipping to previous:", error);
+		}
 	}, []);
 
 	const loadSong = useCallback(
 		async (track: Song) => {
-			await AudioService.loadSong(track);
-			setCurrentSong(track);
+			try {
+				await AudioService.loadSong(track);
+				setCurrentSong(track);
+			} catch (error) {
+				console.error("Error loading song:", error);
+			}
 		},
 		[setCurrentSong]
 	);
 
 	const setPlayerQueue = useCallback(
-		(tracks: Array<Song>) => {
-			AudioService.setQueue(tracks);
-			setQueue(tracks);
+		(songs: Array<Song>) => {
+			AudioService.setQueue(songs);
+			setQueue(songs);
 		},
 		[setQueue]
 	);
@@ -120,11 +155,20 @@ export const useAudioPlayer = () => {
 	}, []);
 
 	const playSongAt = useCallback(async (index: number) => {
-		await AudioService.playSongAt(index);
+		try {
+			await AudioService.playSongAt(index);
+		} catch (error) {
+			console.error("Error playing song at index:", error);
+		}
 	}, []);
 
 	const updateVolume = useCallback(async (volumeLevel: number) => {
-		await AudioService.setVolume(volumeLevel);
+		try {
+			const clampedVolume = Math.max(0, Math.min(1, volumeLevel));
+			await AudioService.setVolume(clampedVolume);
+		} catch (error) {
+			console.error("Error updating volume:", error);
+		}
 	}, []);
 
 	const setRepeatModeCallback = useCallback(
@@ -137,10 +181,13 @@ export const useAudioPlayer = () => {
 
 	const toggleShuffleCallback = useCallback(() => {
 		toggleShuffle();
-		AudioService.shuffleQueue(true);
-	}, [toggleShuffle]);
+		if (!isShuffled) {
+			AudioService.shuffleQueue(true);
+		}
+	}, [toggleShuffle, isShuffled]);
 
 	return {
+		// State
 		currentSong,
 		isPlaying,
 		position,

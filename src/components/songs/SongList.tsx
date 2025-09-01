@@ -22,7 +22,7 @@ export const SongList = ({
 	const handleSongSelect = useCallback(
 		async (selectedSong: Song) => {
 			try {
-				await AudioService.initialize();
+				await AudioService.initialise();
 
 				AudioService.setQueue(songs);
 				const selectedIndex = songs.findIndex(

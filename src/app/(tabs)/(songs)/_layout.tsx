@@ -14,6 +14,7 @@ const SongsScreenLayout = () => {
 					options={{
 						headerTransparent: true,
 						headerTitle: "Songs",
+						headerShown: false,
 					}}
 				/>
 			</Stack>
