@@ -1,5 +1,10 @@
 import { RepeatMode, Song } from "@/types";
-import { AudioPlayer, AudioSource, createAudioPlayer } from "expo-audio";
+import {
+	AudioPlayer,
+	AudioSource,
+	createAudioPlayer,
+	setAudioModeAsync,
+} from "expo-audio";
 
 class AudioService {
 	private player: AudioPlayer | null = null;
@@ -10,17 +15,30 @@ class AudioService {
 	private volume: number = 1.0;
 	private repeatMode: RepeatMode = "off";
 	private isSkippingTrack: boolean = false;
-	private isSeeking: boolean = false;
+	private _isSeeking: boolean = false;
 	private lastSeekTime: number = 0;
+
+	get isSeeking(): boolean {
+		return this._isSeeking;
+	}
 
 	async initialise(): Promise<void> {
 		if (this.isInitialised) return;
 
 		try {
+			await setAudioModeAsync({
+				allowsRecording: false,
+				shouldPlayInBackground: true,
+				playsInSilentMode: true,
+				shouldRouteThroughEarpiece: false,
+				interruptionMode: "doNotMix",
+				interruptionModeAndroid: "doNotMix",
+			});
+
 			this.player = createAudioPlayer(null);
 
 			this.player.addListener("playbackStatusUpdate", (status) => {
-				if (!this.isSkippingTrack && !this.isSeeking) {
+				if (!this.isSkippingTrack && !this._isSeeking) {
 					this.emit("statusUpdate", status);
 				}
 
@@ -95,7 +113,8 @@ class AudioService {
 		if (now - this.lastSeekTime < 50) return;
 		this.lastSeekTime = now;
 
-		this.isSeeking = true;
+		this._isSeeking = true;
+		this.emit("seekingStateChange", true);
 
 		try {
 			await this.player.seekTo(positionMillis / 1000);
@@ -111,7 +130,8 @@ class AudioService {
 			console.error("Error seeking:", error);
 		} finally {
 			setTimeout(() => {
-				this.isSeeking = false;
+				this._isSeeking = false;
+				this.emit("seekingStateChange", false);
 			}, 100);
 		}
 	}
@@ -238,6 +258,7 @@ class AudioService {
 			this.currentIndex >= 0 ? this.queue[this.currentIndex] : null;
 		const newQueue = [...this.queue];
 
+		// Fisher-Yates shuffle
 		for (let i = newQueue.length - 1; i > 0; i--) {
 			const j = Math.floor(Math.random() * (i + 1));
 			[newQueue[i], newQueue[j]] = [newQueue[j], newQueue[i]];
@@ -320,6 +341,10 @@ class AudioService {
 
 	getVolume(): number {
 		return this.volume;
+	}
+
+	getSeekingState(): boolean {
+		return this._isSeeking;
 	}
 
 	async cleanup(): Promise<void> {

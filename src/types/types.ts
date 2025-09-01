@@ -50,22 +50,24 @@ export interface Artist {
 }
 
 export interface AudioState {
-	currentSong: Song | null;
-	queue: Array<Song>;
+	currentSong: any | null;
+	queue: Array<any>;
 	isPlaying: boolean;
 	position: number;
 	duration: number;
 	isLoading: boolean;
-	repeatMode: RepeatMode;
+	repeatMode: "off" | "song" | "queue";
 	isShuffled: boolean;
 	volume: number;
+	isSeeking: boolean;
 
-	setCurrentSong: (song: Song) => void;
-	setQueue: (songs: Array<Song>) => void;
-	setPlaybackStatus: (status: PlaybackStatus) => void;
-	setRepeatMode: (mode: RepeatMode) => void;
+	setCurrentSong: (song: any) => void;
+	setQueue: (songs: Array<any>) => void;
+	setPlaybackStatus: (status: any) => void;
+	setRepeatMode: (mode: "off" | "song" | "queue") => void;
 	toggleShuffle: () => void;
 	setVolume: (volume: number) => void;
+	setIsSeeking: (isSeeking: boolean) => void;
 }
 
 export interface QueueMetadata {
