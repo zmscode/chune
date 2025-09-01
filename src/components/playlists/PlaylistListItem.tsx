@@ -22,13 +22,11 @@ export const PlaylistListItem = ({
 	}, [playlistName]);
 
 	const getPlaylistArtwork = (): string => {
-		// Use first song's artwork if available, otherwise use default
 		return playlistData.artwork || UNKNOWN_SONG_IMAGE_URI;
 	};
 
-	const getPlaylistArtworkGrid = (songs: Song[]): string[] => {
-		// For grid view, get up to 4 unique album arts
-		const artworks: string[] = [];
+	const getPlaylistArtworkGrid = (songs: Array<Song>): string[] => {
+		const artworks: Array<string> = [];
 		const seen = new Set<string>();
 
 		for (const song of songs) {
@@ -39,7 +37,6 @@ export const PlaylistListItem = ({
 			}
 		}
 
-		// Fill remaining slots with default image
 		while (artworks.length < 4) {
 			artworks.push(UNKNOWN_SONG_IMAGE_URI);
 		}
@@ -48,7 +45,6 @@ export const PlaylistListItem = ({
 	};
 
 	const renderArtwork = () => {
-		// If playlist has 4+ different album arts, show grid
 		const uniqueArtworks = new Set(
 			playlistData.songs
 				.filter((song) => song.artwork)
@@ -82,7 +78,6 @@ export const PlaylistListItem = ({
 			);
 		}
 
-		// Otherwise show single artwork or playlist icon
 		if (playlistData.artwork) {
 			return (
 				<Image
@@ -96,7 +91,6 @@ export const PlaylistListItem = ({
 			);
 		}
 
-		// Show playlist icon if no artwork available
 		return (
 			<View
 				style={{

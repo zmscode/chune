@@ -1,4 +1,4 @@
-import { QueueType, Song } from "@/types";
+import { Artist, QueueType, Song } from "@/types";
 import { ReactNode } from "react";
 import { Easing, StyleProps } from "react-native-reanimated";
 import {
@@ -44,4 +44,21 @@ export type PlaylistListItemProps = {
 	playlistName: string;
 	onPlaylistSelect: (playlistName: string) => void;
 	showSongCount?: boolean;
+};
+
+export type ArtistListProps = Partial<FlatListProps<Artist>> & {
+	onArtistSelect?: (artist: Artist) => void;
+	hideEmptyArtists?: boolean;
+};
+
+export type ArtistListItemProps = {
+	artist: Artist;
+	onArtistSelect: (artist: Artist) => void;
+	showSongCount?: boolean;
+};
+
+export type FavouriteButtonProps = {
+	song: Song | null;
+	size?: number;
+	style?: any;
 };

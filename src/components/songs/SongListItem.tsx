@@ -1,12 +1,15 @@
 import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
+import { useFavourites } from "@/hooks/audio/useFavourites";
+import { SongListItemProps } from "@/props";
+import { Image } from "expo-image";
+import { useState } from "react";
+import { Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
 import {
 	DotsThreeOutlineIcon,
 	EqualizerIcon,
 	PauseIcon,
+	HeartIcon,
 } from "phosphor-react-native";
-import { Text, TouchableHighlight, View } from "react-native";
-import { SongListItemProps } from "@/props";
-import { Image } from "expo-image";
 
 export const SongListItem = ({
 	song,
@@ -15,9 +18,13 @@ export const SongListItem = ({
 	isActiveQueue = false,
 }: SongListItemProps) => {
 	const isActiveSong = isPlaying && isActiveQueue;
+	const [showOptions, setShowOptions] = useState(false);
 
 	return (
-		<TouchableHighlight onPress={() => handleSongSelect(song)}>
+		<TouchableHighlight
+			onPress={() => handleSongSelect(song)}
+			underlayColor="#f5f5f5"
+		>
 			<View
 				style={{
 					flexDirection: "row",
@@ -77,15 +84,12 @@ export const SongListItem = ({
 						alignItems: "center",
 					}}
 				>
-					<View style={{ width: "100%" }}>
+					<View style={{ flex: 1, marginRight: 8 }}>
 						<Text
 							numberOfLines={1}
 							style={{
-								...{
-									fontSize: 16,
-									fontWeight: "600",
-									maxWidth: "90%",
-								},
+								fontSize: 16,
+								fontWeight: "600",
 								color: isActiveSong ? "#91dc6e" : "#171f21",
 							}}
 						>
@@ -106,7 +110,15 @@ export const SongListItem = ({
 						)}
 					</View>
 
-					<DotsThreeOutlineIcon size={18} color={"#2b2e2f"} />
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							gap: 16,
+						}}
+					>
+						<DotsThreeOutlineIcon size={18} color={"#2b2e2f"} />
+					</View>
 				</View>
 			</View>
 		</TouchableHighlight>

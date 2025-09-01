@@ -1,6 +1,6 @@
 import libraryData from "@/assets/data/library.json";
 import { useDeviceStore } from "@/stores/globalStore";
-import { Song } from "@/types";
+import { Artist, Song } from "@/types";
 import { Image, ImageSourcePropType } from "react-native";
 
 export const getImageUri = (imageSource: ImageSourcePropType): string => {
@@ -29,30 +29,75 @@ export const generateSongListId = (songListName: string, search?: string) => {
 	return `${songListName}-${search}`;
 };
 
-export const normaliseSong = (song: Song, index: number): Song => ({
+export const normaliseSong = (song: any, index: number): Song => ({
 	id: song.id || `song-${index}-${song.uri.slice(-8)}`,
 	uri: song.uri,
 	title: song.title || "Unknown Title",
 	artist: song.artist,
 	artwork: song.artwork,
-	rating: song.rating,
+	rating: song.rating === 1 ? 1 : undefined,
 	playlist: song.playlist || [],
 });
 
-export const loadLibrarySongs = (): Song[] => {
+export const loadLibrarySongs = (): Array<Song> => {
 	return libraryData.map((song, index) => normaliseSong(song, index));
 };
 
-export const getPlaylistSongs = (playlistName: string): Song[] => {
+export const getPlaylistSongs = (playlistName: string): Array<Song> => {
 	return loadLibrarySongs().filter((song) =>
 		song.playlist?.includes(playlistName)
 	);
 };
 
-export const getAllPlaylists = (): string[] => {
+export const getAllPlaylists = (): Array<string> => {
 	const playlists = new Set<string>();
 	libraryData.forEach((song) => {
 		song.playlist?.forEach((p) => playlists.add(p));
 	});
 	return Array.from(playlists);
+};
+
+export const getAllArtists = (): Array<Artist> => {
+	const artistMap = new Map<string, Array<Song>>();
+
+	loadLibrarySongs().forEach((song) => {
+		if (song.artist) {
+			if (!artistMap.has(song.artist)) {
+				artistMap.set(song.artist, []);
+			}
+			artistMap.get(song.artist)?.push(song);
+		}
+	});
+
+	const artists: Array<Artist> = [];
+	artistMap.forEach((songs, name) => {
+		const artwork = songs.find((song) => song.artwork)?.artwork;
+
+		artists.push({
+			name,
+			songCount: songs.length,
+			songs,
+			artwork,
+		});
+	});
+
+	return artists.sort((a, b) => a.name.localeCompare(b.name));
+};
+
+export const getArtistSongs = (artistName: string): Array<Song> => {
+	return loadLibrarySongs().filter((song) => song.artist === artistName);
+};
+
+export const getArtistByName = (artistName: string): Artist | null => {
+	const songs = getArtistSongs(artistName);
+	if (songs.length === 0) return null;
+
+	const artwork = songs.find((song) => song.artwork)?.artwork;
+
+	return {
+		name: artistName,
+		songCount: songs.length,
+		songs,
+		artwork,
+	};
 };

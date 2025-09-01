@@ -1,3 +1,4 @@
+import { FavouritesInitialiser } from "@/components/custom/FavouritesInitialiser";
 import AudioService from "@/core/AudioService";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -25,11 +26,13 @@ const App = () => {
 	return (
 		<SafeAreaProvider>
 			<GestureHandlerRootView style={{ flex: 1 }}>
-				<SheetProvider context="global">
-					<RootNavigation />
+				<FavouritesInitialiser>
+					<SheetProvider context="global">
+						<RootNavigation />
 
-					<StatusBar style="auto" />
-				</SheetProvider>
+						<StatusBar style="auto" />
+					</SheetProvider>
+				</FavouritesInitialiser>
 			</GestureHandlerRootView>
 		</SafeAreaProvider>
 	);

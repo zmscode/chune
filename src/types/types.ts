@@ -1,4 +1,3 @@
-import { SongRating } from "@/enums";
 import { SheetDefinition } from "react-native-actions-sheet";
 
 export type ColourScheme = "light" | "dark" | null;
@@ -27,7 +26,7 @@ export interface Song {
 	description?: string;
 	genre?: string;
 	date?: string;
-	rating?: SongRating;
+	rating?: number;
 	playlist?: Array<string>;
 }
 
@@ -41,6 +40,13 @@ export interface PlaybackStatus {
 	isMuted?: boolean;
 	isLooping?: boolean;
 	didJustFinish?: boolean;
+}
+
+export interface Artist {
+	name: string;
+	songCount: number;
+	songs: Array<Song>;
+	artwork?: string;
 }
 
 export interface AudioState {
@@ -75,15 +81,27 @@ export interface QueueStore {
 	originalQueue: Array<Song> | null;
 	upNext: Array<Song>;
 
-	setActiveQueue: (metadata: QueueMetadata, songs: Song[]) => void;
+	setActiveQueue: (metadata: QueueMetadata, songs: Array<Song>) => void;
 	clearActiveQueue: () => void;
 	addToUpNext: (song: Song) => void;
 	removeFromUpNext: (songId: string) => void;
 	clearUpNext: () => void;
-	saveOriginalQueue: (songs: Song[]) => void;
-	restoreOriginalQueue: () => Song[] | null;
+	saveOriginalQueue: (songs: Array<Song>) => void;
+	restoreOriginalQueue: () => Array<Song> | null;
 	addToHistory: (metadata: QueueMetadata) => void;
 	getPreviousQueue: () => QueueMetadata | null;
+}
+
+export interface FavouritesState {
+	favouriteIds: Set<string>;
+	isInitialised: boolean;
+	initialiseFromLibrary: () => void;
+	addFavourite: (songId: string) => void;
+	removeFavourite: (songId: string) => void;
+	toggleFavourite: (songId: string) => boolean;
+	isFavourite: (songId: string) => boolean;
+	clearFavourites: () => void;
+	getFavouriteCount: () => number;
 }
 
 export interface DeviceState {

@@ -108,7 +108,7 @@ export const useAudioPlayer = () => {
 	);
 
 	const setPlayerQueue = useCallback(
-		(tracks: Song[]) => {
+		(tracks: Array<Song>) => {
 			AudioService.setQueue(tracks);
 			setQueue(tracks);
 		},

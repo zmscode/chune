@@ -19,6 +19,7 @@
 			"@/utils/*": ["./src/utils/*"],
 			"@/styles/*": ["./src/styles/*"],
 			"@/stores/*": ["./src/stores/*"],
+			"@/hooks/*": ["./src/hooks/*"],
 			"@/types": ["./src/types/types.ts"],
 			"@/props": ["./src/types/props.ts"],
 			"@/enums": ["./src/types/enums.ts"],

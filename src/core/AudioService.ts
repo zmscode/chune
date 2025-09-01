@@ -88,7 +88,7 @@ class AudioService {
 		await this.player.seekTo(positionMillis / 1000);
 	}
 
-	setQueue(songs: Song[]): void {
+	setQueue(songs: Array<Song>): void {
 		this.queue = [...songs];
 		this.currentIndex = -1;
 		this.emit("queueUpdate", this.queue);
@@ -236,7 +236,7 @@ class AudioService {
 		return this.currentIndex >= 0 ? this.queue[this.currentIndex] : null;
 	}
 
-	getQueue(): Song[] {
+	getQueue(): Array<Song> {
 		return [...this.queue];
 	}
 
