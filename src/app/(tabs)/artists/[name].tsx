@@ -3,7 +3,7 @@ import AudioService from "@/core/AudioService";
 import { generateSongListId, getArtistByName } from "@/utils/utility";
 import { Image } from "expo-image";
 import { Redirect, Stack, useLocalSearchParams } from "expo-router";
-import { UserCircleIcon } from "phosphor-react-native";
+import { PlayIcon, ShuffleIcon, UserCircleIcon } from "phosphor-react-native";
 import { useCallback, useMemo } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -118,7 +118,6 @@ const ArtistDetailScreen = () => {
 							style={{
 								flexDirection: "row",
 								gap: 12,
-								width: "100%",
 							}}
 						>
 							<TouchableOpacity
@@ -130,16 +129,20 @@ const ArtistDetailScreen = () => {
 									paddingVertical: 12,
 									borderRadius: 24,
 									alignItems: "center",
+									flexDirection: "row",
+									justifyContent: "center",
 								}}
 							>
+								<PlayIcon size={20} color="#171f21" />
 								<Text
 									style={{
 										color: "#171f21",
 										fontWeight: "600",
 										fontSize: 16,
+										marginLeft: 8,
 									}}
 								>
-									Play
+									Play All
 								</Text>
 							</TouchableOpacity>
 
@@ -152,13 +155,17 @@ const ArtistDetailScreen = () => {
 									paddingVertical: 12,
 									borderRadius: 24,
 									alignItems: "center",
+									flexDirection: "row",
+									justifyContent: "center",
 								}}
 							>
+								<ShuffleIcon size={20} color="#171f21" />
 								<Text
 									style={{
 										color: "#171f21",
 										fontWeight: "600",
 										fontSize: 16,
+										marginLeft: 8,
 									}}
 								>
 									Shuffle

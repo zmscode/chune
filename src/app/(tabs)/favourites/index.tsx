@@ -190,7 +190,6 @@ const FavouritesScreen = () => {
 					</View>
 				</View>
 
-				{/* Play Controls */}
 				<View
 					style={{
 						flexDirection: "row",
