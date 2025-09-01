@@ -1,10 +1,11 @@
 import { SongList } from "@/components/songs/SongList";
 import AudioService from "@/core/AudioService";
 import { usePlaylistDuration } from "@/hooks/audio/usePlaylistDuration";
-import { Redirect, Stack, useLocalSearchParams } from "expo-router";
-import { useCallback, useLayoutEffect, useMemo } from "react";
-import { ScrollView, Text, View } from "react-native";
 import { generateSongListId, getPlaylistSongs } from "@/utils/utility";
+import { Redirect, Stack, useLocalSearchParams } from "expo-router";
+import { PlayIcon, ShuffleIcon } from "phosphor-react-native";
+import { useCallback, useLayoutEffect, useMemo } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 const PlaylistDetailScreen = () => {
 	const { name } = useLocalSearchParams<{ name: string }>();
@@ -99,46 +100,57 @@ const PlaylistDetailScreen = () => {
 								gap: 12,
 							}}
 						>
-							<View
+							<TouchableOpacity
+								onPress={handlePlayPlaylist}
+								activeOpacity={0.8}
 								style={{
 									flex: 1,
 									backgroundColor: "#91dc6e",
 									paddingVertical: 12,
-									borderRadius: 8,
+									borderRadius: 24,
 									alignItems: "center",
+									flexDirection: "row",
+									justifyContent: "center",
 								}}
 							>
+								<PlayIcon size={20} color="#171f21" />
 								<Text
-									onPress={handlePlayPlaylist}
 									style={{
 										color: "#171f21",
 										fontWeight: "600",
 										fontSize: 16,
+										marginLeft: 8,
 									}}
 								>
-									Play
+									{"Play All"}
 								</Text>
-							</View>
-							<View
+							</TouchableOpacity>
+
+							<TouchableOpacity
+								onPress={handleShufflePlaylist}
+								activeOpacity={0.8}
 								style={{
 									flex: 1,
 									backgroundColor: "#b8b8b8",
 									paddingVertical: 12,
-									borderRadius: 8,
+									borderRadius: 24,
 									alignItems: "center",
+									flexDirection: "row",
+									justifyContent: "center",
 								}}
 							>
+								<ShuffleIcon size={20} color="#171f21" />
 								<Text
-									onPress={handleShufflePlaylist}
 									style={{
 										color: "#171f21",
 										fontWeight: "600",
 										fontSize: 16,
+										marginLeft: 8,
 									}}
 								>
-									Shuffle
+									{"Shuffle"}
 								</Text>
-							</View>
+							</TouchableOpacity>
 						</View>
 					</View>
 

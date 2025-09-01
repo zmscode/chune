@@ -1,4 +1,5 @@
 import { PlaylistList } from "@/components/playlists/PlaylistList";
+import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import { useCallback } from "react";
 import { ScrollView, View } from "react-native";
@@ -17,6 +18,7 @@ const PlaylistsScreen = () => {
 		<View
 			style={{
 				flex: 1,
+				paddingTop: Constants.statusBarHeight,
 				backgroundColor: "#eeeeee",
 			}}
 		>

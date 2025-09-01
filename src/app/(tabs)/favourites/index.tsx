@@ -2,6 +2,7 @@ import { SongList } from "@/components/songs/SongList";
 import AudioService from "@/core/AudioService";
 import { useFavourites } from "@/hooks/audio/useFavourites";
 import { generateSongListId } from "@/utils/utility";
+import Constants from "expo-constants";
 import { HeartIcon, PlayIcon, ShuffleIcon } from "phosphor-react-native";
 import { useCallback } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -57,7 +58,7 @@ const FavouritesScreen = () => {
 						marginBottom: 12,
 					}}
 				>
-					No Favourites Yet
+					{"No Favourites Yet"}
 				</Text>
 
 				<Text
@@ -68,8 +69,9 @@ const FavouritesScreen = () => {
 						lineHeight: 22,
 					}}
 				>
-					Songs you mark as favourite will appear here. Tap the heart
-					icon on any song to add it to your favourites.
+					{
+						"Songs you mark as favourite will appear here. Tap the heart icon on any song to add it to your favourites."
+					}
 				</Text>
 			</View>
 		);
@@ -79,6 +81,7 @@ const FavouritesScreen = () => {
 		<View
 			style={{
 				flex: 1,
+				paddingTop: Constants.statusBarHeight,
 				backgroundColor: "#eeeeee",
 			}}
 		>
@@ -94,7 +97,6 @@ const FavouritesScreen = () => {
 						marginBottom: 10,
 					}}
 				>
-					\{" "}
 					<View
 						style={{
 							flexDirection: "row",
@@ -111,7 +113,7 @@ const FavouritesScreen = () => {
 									marginBottom: 4,
 								}}
 							>
-								Favourites
+								{"Favourites"}
 							</Text>
 							<Text
 								style={{
@@ -143,7 +145,7 @@ const FavouritesScreen = () => {
 								justifyContent: "center",
 							}}
 						>
-							<PlayIcon size={20} color="#171f21" weight="fill" />
+							<PlayIcon size={20} color="#171f21" />
 							<Text
 								style={{
 									color: "#171f21",
@@ -152,7 +154,7 @@ const FavouritesScreen = () => {
 									marginLeft: 8,
 								}}
 							>
-								Play All
+								{"Play All"}
 							</Text>
 						</TouchableOpacity>
 
@@ -178,7 +180,7 @@ const FavouritesScreen = () => {
 									marginLeft: 8,
 								}}
 							>
-								Shuffle
+								{"Shuffle"}
 							</Text>
 						</TouchableOpacity>
 					</View>

@@ -1,6 +1,7 @@
 import { SongList } from "@/components/songs/SongList";
 import { generateSongListId } from "@/utils/utility";
 import { loadLibrarySongs } from "@/utils/utility";
+import Constants from "expo-constants";
 import { useMemo } from "react";
 import { ScrollView, View } from "react-native";
 
@@ -11,6 +12,7 @@ const SongsScreen = () => {
 		<View
 			style={{
 				flex: 1,
+				paddingTop: Constants.statusBarHeight,
 				backgroundColor: "#eeeeee",
 			}}
 		>

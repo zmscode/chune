@@ -4,7 +4,6 @@ import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
 import AudioService from "@/core/AudioService";
 import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
 import { SongListProps } from "@/props";
-import { useDeviceStore } from "@/stores/globalStore";
 import { Song } from "@/types";
 import { Image } from "expo-image";
 import { memo, useCallback } from "react";

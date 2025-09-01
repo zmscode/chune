@@ -1,6 +1,8 @@
 - Add search funtionality to the individual tabs
 
-- Finish the favourites tab
+- Flesh out abums 
+
+- Add lyrics capabilities, using .lrc files
 
 - Fix the display layout on tabs
     + Add padding to the top possibly

@@ -1,5 +1,6 @@
 import { ArtistList } from "@/components/artist/ArtistList";
 import { Artist } from "@/types";
+import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import { useCallback } from "react";
 import { ScrollView, View } from "react-native";
@@ -18,6 +19,7 @@ const ArtistsScreen = () => {
 		<View
 			style={{
 				flex: 1,
+				paddingTop: Constants.statusBarHeight,
 				backgroundColor: "#eeeeee",
 			}}
 		>
