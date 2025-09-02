@@ -3,7 +3,7 @@ import { PlayerRepeatToggle } from "@/components/player/PlayerRepeatToggle";
 import { PlayerShuffleToggle } from "@/components/player/PlayerShuffleToggle";
 import { PlayerVolumeBar } from "@/components/player/PlayerVolumeBar";
 import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
-import AudioService from "@/core/AudioService";
+import TrackPlayerService from "@/core/TrackPlayerService";
 import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
 import { PlayerControlsProps } from "@/props";
 import { useDeviceStore } from "@/stores/globalStore";
@@ -250,7 +250,7 @@ export const PlayPauseButton = ({
 	const { isPlaying } = useAudioPlayer();
 
 	const togglePlayPause = () => {
-		isPlaying ? AudioService.pause() : AudioService.play();
+		isPlaying ? TrackPlayerService.pause() : TrackPlayerService.play();
 	};
 
 	return (
@@ -274,7 +274,7 @@ export const SkipToNextButton = ({ iconSize = 40 }: PlayerControlsProps) => {
 	return (
 		<TouchableOpacity
 			activeOpacity={0.7}
-			onPress={() => AudioService.skipToNext()}
+			onPress={() => TrackPlayerService.skipToNext()}
 			hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
 		>
 			<FastForwardIcon size={iconSize} color={"#171f21"} />
@@ -288,7 +288,7 @@ export const SkipToPreviousButton = ({
 	return (
 		<TouchableOpacity
 			activeOpacity={0.7}
-			onPress={() => AudioService.skipToPrevious()}
+			onPress={() => TrackPlayerService.skipToPrevious()}
 			hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
 		>
 			<RewindIcon size={iconSize} color={"#171f21"} />

@@ -1,15 +1,18 @@
-import AudioService from "@/core/AudioService";
+import TrackPlayerService from "@/core/TrackPlayerService";
 import { useAudioStore } from "@/stores/audioStore";
 import { RepeatMode, Song } from "@/types";
-import { AudioStatus } from "expo-audio";
 import { useCallback, useEffect, useRef } from "react";
+import TrackPlayer, {
+	useProgress,
+	usePlaybackState,
+	useActiveTrack,
+	State,
+} from "react-native-track-player";
 
 export const useAudioPlayer = () => {
 	const {
 		currentSong,
 		isPlaying,
-		position,
-		duration,
 		queue,
 		repeatMode,
 		volume,
@@ -21,38 +24,68 @@ export const useAudioPlayer = () => {
 		setRepeatMode,
 		toggleShuffle,
 		isLoading,
+		setPlaybackState,
 	} = useAudioStore();
 
+	// Use react-native-track-player hooks
+	const progress = useProgress();
+	const playbackState = usePlaybackState();
+	const activeTrack = useActiveTrack();
+
 	const isMounted = useRef(true);
+
+	// Convert track to song when active track changes
+	useEffect(() => {
+		if (activeTrack) {
+			const song: Song = {
+				id: activeTrack.id as string,
+				uri: activeTrack.url as string,
+				title: activeTrack.title || "Unknown Title",
+				artist: activeTrack.artist || undefined,
+				artwork: activeTrack.artwork as string | undefined,
+				duration: activeTrack.duration,
+			};
+			setCurrentSong(song);
+		} else {
+			setCurrentSong(null);
+		}
+	}, [activeTrack, setCurrentSong]);
+
+	// Update playback state
+	useEffect(() => {
+		if (playbackState.state) {
+			setPlaybackState(playbackState.state);
+		}
+	}, [playbackState.state, setPlaybackState]);
+
+	// Update progress
+	useEffect(() => {
+		setPlaybackStatus({
+			isLoading:
+				playbackState.state === State.Loading ||
+				playbackState.state === State.Buffering,
+			isPlaying: playbackState.state === State.Playing,
+			isBuffering: playbackState.state === State.Buffering,
+			positionMillis: progress.position * 1000,
+			durationMillis: progress.duration * 1000,
+			isMuted: false,
+			isLooping: false,
+			didJustFinish: playbackState.state === State.Ended,
+		});
+	}, [
+		progress.position,
+		progress.duration,
+		playbackState.state,
+		setPlaybackStatus,
+	]);
 
 	useEffect(() => {
 		isMounted.current = true;
 
-		AudioService.initialise();
+		TrackPlayerService.initialise();
+		TrackPlayerService.setRepeatMode(repeatMode);
 
-		AudioService.setRepeatMode(repeatMode);
-
-		const handleStatusUpdate = (status: AudioStatus) => {
-			if (!isMounted.current) return;
-
-			setPlaybackStatus({
-				isLoading: status.isLoaded ? false : true,
-				isPlaying: status.playing,
-				isBuffering: status.isBuffering,
-				positionMillis: status.currentTime * 1000,
-				durationMillis: status.duration * 1000,
-				isMuted: status.mute,
-				isLooping: status.loop,
-				didJustFinish: status.didJustFinish,
-			});
-		};
-
-		const handleSongChange = (song: Song) => {
-			if (!isMounted.current) return;
-			setCurrentSong(song);
-		};
-
-		const handleQueueUpdate = (newQueue: Array<Song>) => {
+		const handleQueueUpdate = (newQueue: Song[]) => {
 			if (!isMounted.current) return;
 			setQueue(newQueue);
 		};
@@ -67,32 +100,21 @@ export const useAudioPlayer = () => {
 			setRepeatMode(mode);
 		};
 
-		AudioService.on("statusUpdate", handleStatusUpdate);
-		AudioService.on("trackChange", handleSongChange);
-		AudioService.on("queueUpdate", handleQueueUpdate);
-		AudioService.on("volumeUpdate", handleVolumeUpdate);
-		AudioService.on("repeatModeUpdate", handleRepeatModeUpdate);
+		TrackPlayerService.on("queueUpdate", handleQueueUpdate);
+		TrackPlayerService.on("volumeUpdate", handleVolumeUpdate);
+		TrackPlayerService.on("repeatModeUpdate", handleRepeatModeUpdate);
 
 		return () => {
 			isMounted.current = false;
-			AudioService.off("statusUpdate", handleStatusUpdate);
-			AudioService.off("trackChange", handleSongChange);
-			AudioService.off("queueUpdate", handleQueueUpdate);
-			AudioService.off("volumeUpdate", handleVolumeUpdate);
-			AudioService.off("repeatModeUpdate", handleRepeatModeUpdate);
+			TrackPlayerService.off("queueUpdate", handleQueueUpdate);
+			TrackPlayerService.off("volumeUpdate", handleVolumeUpdate);
+			TrackPlayerService.off("repeatModeUpdate", handleRepeatModeUpdate);
 		};
-	}, [
-		setCurrentSong,
-		setQueue,
-		setPlaybackStatus,
-		setVolume,
-		setRepeatMode,
-		repeatMode,
-	]);
+	}, [setQueue, setVolume, setRepeatMode, repeatMode]);
 
 	const play = useCallback(async () => {
 		try {
-			await AudioService.play();
+			await TrackPlayerService.play();
 		} catch (error) {
 			console.error("Error playing:", error);
 		}
@@ -100,7 +122,7 @@ export const useAudioPlayer = () => {
 
 	const pause = useCallback(async () => {
 		try {
-			await AudioService.pause();
+			await TrackPlayerService.pause();
 		} catch (error) {
 			console.error("Error pausing:", error);
 		}
@@ -108,7 +130,7 @@ export const useAudioPlayer = () => {
 
 	const seek = useCallback(async (positionMillis: number) => {
 		try {
-			await AudioService.seek(positionMillis);
+			await TrackPlayerService.seek(positionMillis);
 		} catch (error) {
 			console.error("Error seeking:", error);
 		}
@@ -116,7 +138,7 @@ export const useAudioPlayer = () => {
 
 	const skipToNext = useCallback(async () => {
 		try {
-			await AudioService.skipToNext();
+			await TrackPlayerService.skipToNext();
 		} catch (error) {
 			console.error("Error skipping to next:", error);
 		}
@@ -124,7 +146,7 @@ export const useAudioPlayer = () => {
 
 	const skipToPrevious = useCallback(async () => {
 		try {
-			await AudioService.skipToPrevious();
+			await TrackPlayerService.skipToPrevious();
 		} catch (error) {
 			console.error("Error skipping to previous:", error);
 		}
@@ -133,7 +155,7 @@ export const useAudioPlayer = () => {
 	const loadSong = useCallback(
 		async (track: Song) => {
 			try {
-				await AudioService.loadSong(track);
+				await TrackPlayerService.loadSong(track);
 				setCurrentSong(track);
 			} catch (error) {
 				console.error("Error loading song:", error);
@@ -143,20 +165,23 @@ export const useAudioPlayer = () => {
 	);
 
 	const setPlayerQueue = useCallback(
-		(songs: Array<Song>) => {
-			AudioService.setQueue(songs);
+		async (songs: Song[]) => {
+			await TrackPlayerService.setQueue(songs);
 			setQueue(songs);
 		},
 		[setQueue]
 	);
 
-	const shuffleQueue = useCallback((keepCurrentSong: boolean = true) => {
-		AudioService.shuffleQueue(keepCurrentSong);
-	}, []);
+	const shuffleQueue = useCallback(
+		async (keepCurrentSong: boolean = true) => {
+			await TrackPlayerService.shuffleQueue(keepCurrentSong);
+		},
+		[]
+	);
 
 	const playSongAt = useCallback(async (index: number) => {
 		try {
-			await AudioService.playSongAt(index);
+			await TrackPlayerService.playSongAt(index);
 		} catch (error) {
 			console.error("Error playing song at index:", error);
 		}
@@ -164,40 +189,42 @@ export const useAudioPlayer = () => {
 
 	const updateVolume = useCallback(async (volumeLevel: number) => {
 		try {
-			const clampedVolume = Math.max(0, Math.min(1, volumeLevel));
-			await AudioService.setVolume(clampedVolume);
+			await TrackPlayerService.setVolume(volumeLevel);
 		} catch (error) {
 			console.error("Error updating volume:", error);
 		}
 	}, []);
 
 	const setRepeatModeCallback = useCallback(
-		(mode: RepeatMode) => {
+		async (mode: RepeatMode) => {
 			setRepeatMode(mode);
-			AudioService.setRepeatMode(mode);
+			await TrackPlayerService.setRepeatMode(mode);
 		},
 		[setRepeatMode]
 	);
 
-	const toggleShuffleCallback = useCallback(() => {
+	const toggleShuffleCallback = useCallback(async () => {
 		toggleShuffle();
 		if (!isShuffled) {
-			AudioService.shuffleQueue(true);
+			await TrackPlayerService.shuffleQueue(true);
 		}
 	}, [toggleShuffle, isShuffled]);
 
 	return {
 		// State
 		currentSong,
-		isPlaying,
-		position,
-		duration,
+		isPlaying: playbackState.state === State.Playing,
+		position: progress.position * 1000, // Convert to milliseconds
+		duration: progress.duration * 1000, // Convert to milliseconds
 		queue,
 		repeatMode,
 		volume,
 		isShuffled,
-		isLoading,
+		isLoading:
+			playbackState.state === State.Loading ||
+			playbackState.state === State.Buffering,
 
+		// Actions
 		play,
 		pause,
 		seek,

@@ -1,27 +1,32 @@
 import { SongList } from "@/components/songs/SongList";
-import AudioService from "@/core/AudioService";
+import TrackPlayerService from "@/core/TrackPlayerService";
 import { useFavourites } from "@/hooks/audio/useFavourites";
 import { generateSongListId } from "@/utils/utility";
 import Constants from "expo-constants";
 import { HeartIcon, PlayIcon, ShuffleIcon } from "phosphor-react-native";
 import { useCallback } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View
+	} from "react-native";
 
 const FavouritesScreen = () => {
 	const { favouriteSongs, favouriteCount } = useFavourites();
 
-	const handlePlayFavourites = useCallback(() => {
+	const handlePlayFavourites = useCallback(async () => {
 		if (favouriteSongs.length > 0) {
-			AudioService.setQueue(favouriteSongs);
-			AudioService.playSongAt(0);
+			await TrackPlayerService.setQueue(favouriteSongs);
+			await TrackPlayerService.playSongAt(0);
 		}
 	}, [favouriteSongs]);
 
-	const handleShuffleFavourites = useCallback(() => {
+	const handleShuffleFavourites = useCallback(async () => {
 		if (favouriteSongs.length > 0) {
-			AudioService.setQueue(favouriteSongs);
-			AudioService.shuffleQueue(false);
-			AudioService.playSongAt(0);
+			await TrackPlayerService.setQueue(favouriteSongs);
+			await TrackPlayerService.shuffleQueue(false);
+			await TrackPlayerService.playSongAt(0);
 		}
 	}, [favouriteSongs]);
 

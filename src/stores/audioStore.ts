@@ -1,20 +1,27 @@
-import { AudioState } from "@/types";
+import {
+	AudioState,
+	ExtendedAudioState,
+	RepeatMode,
+	Song
+	} from "@/types";
+import { State } from "react-native-track-player";
 import { create } from "zustand";
 
-export const useAudioStore = create<AudioState>((set) => ({
+export const useAudioStore = create<ExtendedAudioState>((set) => ({
 	currentSong: null,
 	queue: [],
 	isPlaying: false,
 	position: 0,
 	duration: 0,
 	isLoading: false,
-	repeatMode: "off",
+	repeatMode: "off" as RepeatMode,
 	isShuffled: false,
 	volume: 1.0,
 	isSeeking: false,
+	playbackState: State.None,
 
-	setCurrentSong: (song) => set({ currentSong: song }),
-	setQueue: (songs) => set({ queue: songs }),
+	setCurrentSong: (song: Song | null) => set({ currentSong: song }),
+	setQueue: (songs: Song[]) => set({ queue: songs }),
 	setPlaybackStatus: (status) =>
 		set({
 			isPlaying: status.isPlaying,
@@ -22,8 +29,14 @@ export const useAudioStore = create<AudioState>((set) => ({
 			duration: status.durationMillis,
 			isLoading: status.isLoading,
 		}),
-	setRepeatMode: (mode) => set({ repeatMode: mode }),
+	setPlaybackState: (state: State) =>
+		set({
+			playbackState: state,
+			isPlaying: state === State.Playing,
+			isLoading: state === State.Loading || state === State.Buffering,
+		}),
+	setRepeatMode: (mode: RepeatMode) => set({ repeatMode: mode }),
 	toggleShuffle: () => set((state) => ({ isShuffled: !state.isShuffled })),
-	setVolume: (volume) => set({ volume }),
-	setIsSeeking: (isSeeking) => set({ isSeeking }),
+	setVolume: (volume: number) => set({ volume }),
+	setIsSeeking: (isSeeking: boolean) => set({ isSeeking }),
 }));

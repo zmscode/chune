@@ -1,4 +1,5 @@
 import { SheetDefinition } from "react-native-actions-sheet";
+import { State } from "react-native-track-player";
 
 export type ColourScheme = "light" | "dark" | null;
 
@@ -68,6 +69,11 @@ export interface AudioState {
 	toggleShuffle: () => void;
 	setVolume: (volume: number) => void;
 	setIsSeeking: (isSeeking: boolean) => void;
+}
+
+export interface ExtendedAudioState extends AudioState {
+	playbackState: State;
+	setPlaybackState: (state: State) => void;
 }
 
 export interface QueueMetadata {

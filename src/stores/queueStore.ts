@@ -1,9 +1,9 @@
+import AudioService from "@/core/TrackPlayerService";
+import { useAudioStore } from "@/stores/audioStore";
+import { QueueStore } from "@/types";
 import { useMemo } from "react";
 import { create } from "zustand";
-import { QueueStore } from "@/types";
 import { persist } from "zustand/middleware";
-import AudioService from "@/core/AudioService";
-import { useAudioStore } from "@/stores/audioStore";
 
 export const useQueueStore = create<QueueStore>()(
 	persist(
@@ -91,7 +91,8 @@ export const useActiveQueue = () => useQueueStore((state) => state.activeQueue);
 
 export const useUpNext = () => useQueueStore((state) => state.upNext);
 
-export const useSetActiveQueue = () => useQueueStore((state) => state.setActiveQueue);
+export const useSetActiveQueue = () =>
+	useQueueStore((state) => state.setActiveQueue);
 
 export const useQueueActions = () =>
 	useQueueStore((state) => ({

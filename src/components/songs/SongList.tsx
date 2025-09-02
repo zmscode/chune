@@ -1,7 +1,7 @@
 import { ItemDivider } from "@/components/custom/ItemDivider";
 import { SongListItem } from "@/components/songs/SongListItem";
 import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
-import AudioService from "@/core/AudioService";
+import AudioService from "@/core/TrackPlayerService";
 import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
 import { SongListProps } from "@/props";
 import { Song } from "@/types";

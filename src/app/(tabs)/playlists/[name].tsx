@@ -1,11 +1,16 @@
 import { SongList } from "@/components/songs/SongList";
-import AudioService from "@/core/AudioService";
+import TrackPlayerService from "@/core/TrackPlayerService";
 import { usePlaylistDuration } from "@/hooks/audio/usePlaylistDuration";
 import { generateSongListId, getPlaylistSongs } from "@/utils/utility";
 import { Redirect, Stack, useLocalSearchParams } from "expo-router";
 import { PlayIcon, ShuffleIcon } from "phosphor-react-native";
 import { useCallback, useLayoutEffect, useMemo } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View
+	} from "react-native";
 
 const PlaylistDetailScreen = () => {
 	const { name } = useLocalSearchParams<{ name: string }>();
@@ -22,21 +27,22 @@ const PlaylistDetailScreen = () => {
 
 	useLayoutEffect(() => {
 		if (playlistName) {
+			// Layout effect if needed
 		}
 	}, [playlistName]);
 
-	const handlePlayPlaylist = useCallback(() => {
+	const handlePlayPlaylist = useCallback(async () => {
 		if (playlistSongs.length > 0) {
-			AudioService.setQueue(playlistSongs);
-			AudioService.playSongAt(0);
+			await TrackPlayerService.setQueue(playlistSongs);
+			await TrackPlayerService.playSongAt(0);
 		}
 	}, [playlistSongs]);
 
-	const handleShufflePlaylist = useCallback(() => {
+	const handleShufflePlaylist = useCallback(async () => {
 		if (playlistSongs.length > 0) {
-			AudioService.setQueue(playlistSongs);
-			AudioService.shuffleQueue(false);
-			AudioService.playSongAt(0);
+			await TrackPlayerService.setQueue(playlistSongs);
+			await TrackPlayerService.shuffleQueue(false);
+			await TrackPlayerService.playSongAt(0);
 		}
 	}, [playlistSongs]);
 
