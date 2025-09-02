@@ -36,7 +36,7 @@
 		"react-native-screens": "~4.11.1",
 		"react-native-svg": "15.11.2",
 		"react-native-text-ticker": "^1.15.0",
-		"react-native-track-player": "^4.1.2",
+		"react-native-track-player": "github:lovegaoshi/react-native-track-player",
 		"react-native-web": "^0.20.0",
 		"shaka-player": "^4.16.0",
 		"zustand": "^5.0.8"
