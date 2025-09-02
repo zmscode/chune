@@ -1,13 +1,12 @@
-import { PlayerScreen } from "@/components/player/PlayerScreen";
 import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
 import TrackPlayerService from "@/core/TrackPlayerService";
 import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
 import { PlayerControlsProps } from "@/props";
-import { sheets } from "@/sheets/sheetManager";
 import { floatingPlayerStyles } from "@/styles/floatingPlayer";
 import { Image } from "expo-image";
 import { FastForwardIcon, PauseIcon, PlayIcon } from "phosphor-react-native";
 import { TouchableOpacity, View, ViewProps } from "react-native";
+import { SheetManager } from "react-native-actions-sheet";
 import TextTicker from "react-native-text-ticker";
 
 export const FloatingPlayer = ({ style }: ViewProps) => {
@@ -15,63 +14,57 @@ export const FloatingPlayer = ({ style }: ViewProps) => {
 
 	if (!currentSong) return null;
 
-	const playerSheet = sheets.find((sheet) => sheet.title === "player");
-
 	const handlePress = () => {
-		if (!playerSheet) return;
-		playerSheet.onOpen();
+		SheetManager.show("player");
 	};
 
 	return (
-		<>
-			<TouchableOpacity
-				onPress={handlePress}
-				activeOpacity={0.9}
-				style={[floatingPlayerStyles.container, style]}
+		<TouchableOpacity
+			onPress={handlePress}
+			activeOpacity={0.9}
+			style={[floatingPlayerStyles.container, style]}
+		>
+			<Image
+				source={{
+					uri: currentSong.artwork ?? UNKNOWN_SONG_IMAGE_URI,
+				}}
+				style={{
+					width: 48,
+					height: 48,
+					borderRadius: 8,
+				}}
+			/>
+
+			<View
+				style={[
+					floatingPlayerStyles.songTitleContainer,
+					{ flex: 1, marginRight: 8, justifyContent: "center" },
+				]}
 			>
-				<Image
-					source={{
-						uri: currentSong.artwork ?? UNKNOWN_SONG_IMAGE_URI,
-					}}
-					style={{
-						width: 48,
-						height: 48,
-						borderRadius: 8,
-					}}
-				/>
-
-				<View
-					style={[
-						floatingPlayerStyles.songTitleContainer,
-						{ flex: 1, marginRight: 8, justifyContent: "center" },
-					]}
+				<TextTicker
+					style={floatingPlayerStyles.songTitle}
+					duration={3000}
+					loop
+					bounce
+					repeatSpacer={50}
+					marqueeDelay={1000}
 				>
-					<TextTicker
-						style={floatingPlayerStyles.songTitle}
-						duration={3000}
-						loop
-						bounce
-						repeatSpacer={50}
-						marqueeDelay={1000}
-					>
-						{currentSong.title ?? ""}
-					</TextTicker>
-				</View>
+					{currentSong.title ?? ""}
+				</TextTicker>
+			</View>
 
-				<View style={floatingPlayerStyles.songControlsContainer}>
-					<PlayPauseButton iconSize={32} />
-					<SkipToNextButton iconSize={32} />
-				</View>
-			</TouchableOpacity>
-
-			<PlayerScreen />
-		</>
+			<View style={floatingPlayerStyles.songControlsContainer}>
+				<PlayPauseButton iconSize={32} isPlaying={isPlaying} />
+				<SkipToNextButton iconSize={32} />
+			</View>
+		</TouchableOpacity>
 	);
 };
 
-const PlayPauseButton = ({ iconSize = 32 }: PlayerControlsProps) => {
-	const { isPlaying } = useAudioPlayer();
-
+const PlayPauseButton = ({
+	iconSize = 32,
+	isPlaying,
+}: PlayerControlsProps & { isPlaying: boolean }) => {
 	const togglePlayPause = (e: any) => {
 		e.stopPropagation();
 		isPlaying ? TrackPlayerService.pause() : TrackPlayerService.play();

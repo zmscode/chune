@@ -1,3 +1,4 @@
+import { FavouriteButton } from "@/components/player/FavouriteButton";
 import { PlayerProgressBar } from "@/components/player/PlayerProgressBar";
 import { PlayerRepeatToggle } from "@/components/player/PlayerRepeatToggle";
 import { PlayerShuffleToggle } from "@/components/player/PlayerShuffleToggle";
@@ -9,85 +10,72 @@ import { PlayerControlsProps } from "@/props";
 import { useDeviceStore } from "@/stores/globalStore";
 import { playerControlsStyles } from "@/styles/playerControls";
 import { Image } from "expo-image";
-import { useState } from "react";
+import React from "react";
 import {
 	ActivityIndicator,
 	Text,
 	TouchableOpacity,
 	View
 	} from "react-native";
-import ActionSheet from "react-native-actions-sheet";
+import ActionSheet, { SheetProps } from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TextTicker from "react-native-text-ticker";
 import {
 	FastForwardIcon,
-	HeartIcon,
 	PauseIcon,
 	PlayIcon,
 	RewindIcon,
 } from "phosphor-react-native";
 
-export const PlayerScreen = () => {
+const PlayerScreen = (props: SheetProps) => {
 	const { currentSong, isLoading } = useAudioPlayer();
-
 	const { height } = useDeviceStore();
-	const { top, bottom } = useSafeAreaInsets();
-
-	const [localFavourites, setLocalFavourites] = useState<Set<string>>(
-		new Set()
-	);
-	const isFavourite = currentSong
-		? localFavourites.has(currentSong.id || "")
-		: false;
-
-	const toggleFavourite = () => {
-		if (!currentSong?.id) return;
-
-		setLocalFavourites((prev) => {
-			const newFavs = new Set(prev);
-			if (newFavs.has(currentSong.id!)) {
-				newFavs.delete(currentSong.id!);
-			} else {
-				newFavs.add(currentSong.id!);
-			}
-			return newFavs;
-		});
-	};
+	const { bottom } = useSafeAreaInsets();
 
 	if (isLoading && !currentSong) {
 		return (
-			<View
-				style={{
-					flex: 1,
+			<ActionSheet
+				id={props.sheetId}
+				gestureEnabled={true}
+				indicatorStyle={{
+					width: 100,
+					marginTop: 10,
+				}}
+				containerStyle={{
 					backgroundColor: "#eeeeee",
-					justifyContent: "center",
 				}}
 			>
-				<ActivityIndicator color={"#2b2e2f"} />
-			</View>
+				<View
+					style={{
+						height: 200,
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
+					<ActivityIndicator color={"#2b2e2f"} />
+				</View>
+			</ActionSheet>
 		);
 	}
 
 	return (
 		<ActionSheet
-			id="player"
-			isModal={false}
+			id={props.sheetId}
 			gestureEnabled={true}
 			indicatorStyle={{
 				width: 100,
 				marginTop: 10,
 			}}
 			containerStyle={{
-				height: height,
-				backgroundColor: "white",
+				backgroundColor: "#eeeeee",
 			}}
 		>
 			<View
 				style={{
-					height: height - top - 20,
 					paddingTop: 30,
 					paddingBottom: bottom + 20,
 					paddingHorizontal: 24,
+					minHeight: height * 0.9,
 				}}
 			>
 				<View
@@ -158,22 +146,7 @@ export const PlayerScreen = () => {
 							</TextTicker>
 						</View>
 
-						<TouchableOpacity
-							activeOpacity={0.7}
-							onPress={toggleFavourite}
-							disabled={!currentSong?.id}
-							hitSlop={{
-								top: 10,
-								bottom: 10,
-								left: 10,
-								right: 10,
-							}}
-						>
-							<HeartIcon
-								size={26}
-								color={isFavourite ? "#f86370" : "#2b2e2f"}
-							/>
-						</TouchableOpacity>
+						<FavouriteButton song={currentSong} size={26} />
 					</View>
 
 					{currentSong?.artist && (
@@ -295,3 +268,5 @@ export const SkipToPreviousButton = ({
 		</TouchableOpacity>
 	);
 };
+
+export default PlayerScreen;
