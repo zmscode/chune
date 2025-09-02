@@ -45,20 +45,24 @@ class TrackPlayerService {
 
 			this.setupEventListeners();
 			this.isInitialised = true;
+			console.log("TrackPlayerService initialized successfully");
 		} catch (error) {
 			console.error("Failed to initialise TrackPlayerService:", error);
-			throw error;
+			// Don't throw - try to recover
+			this.isInitialised = false;
 		}
 	}
 
 	private setupEventListeners(): void {
 		TrackPlayer.addEventListener(Event.PlaybackState, (event) => {
+			console.log("Playback state changed:", event.state);
 			this.emit("playbackStateChange", event.state);
 		});
 
 		TrackPlayer.addEventListener(
 			Event.PlaybackActiveTrackChanged,
 			async (event) => {
+				console.log("Active track changed:", event);
 				if (event.track) {
 					const song = this.trackToSong(event.track);
 					this.emit("trackChange", song);
@@ -66,15 +70,18 @@ class TrackPlayerService {
 			}
 		);
 
-		TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {
-			this.emit("progressUpdate", {
-				position: event.position * 1000,
-				duration: event.duration * 1000,
-				buffered: event.buffered * 1000,
-			});
-		});
+		TrackPlayer.addEventListener(
+			Event.PlaybackProgressUpdated,
+			(event: Event) => {
+				this.emit("progressUpdate", {
+					position: event.position * 1000,
+					duration: event.duration * 1000,
+					buffered: event.buffered * 1000,
+				});
+			}
+		);
 
-		TrackPlayer.addEventListener(Event.PlaybackError, (event) => {
+		TrackPlayer.addEventListener(Event.PlaybackError, (event: Event) => {
 			console.error("Playback error:", event);
 			this.emit("playbackError", event);
 		});
@@ -85,7 +92,7 @@ class TrackPlayerService {
 		TrackPlayer.addEventListener(Event.RemotePrevious, () =>
 			this.skipToPrevious()
 		);
-		TrackPlayer.addEventListener(Event.RemoteSeek, (event) =>
+		TrackPlayer.addEventListener(Event.RemoteSeek, (event: Event) =>
 			this.seek(event.position * 1000)
 		);
 	}
@@ -129,6 +136,7 @@ class TrackPlayerService {
 
 	async loadSong(song: Song): Promise<void> {
 		try {
+			console.log("Loading song:", song.title);
 			const track = this.songToTrack(song);
 			await TrackPlayer.reset();
 			await TrackPlayer.add(track);
@@ -168,10 +176,12 @@ class TrackPlayerService {
 
 	async setQueue(songs: Song[]): Promise<void> {
 		try {
+			console.log(`Setting queue with ${songs.length} songs`);
 			const tracks = songs.map((song) => this.songToTrack(song));
 			await TrackPlayer.reset();
 			await TrackPlayer.add(tracks);
 			this.emit("queueUpdate", songs);
+			console.log("Queue set successfully");
 		} catch (error) {
 			console.error("Error setting queue:", error);
 			throw error;
@@ -213,8 +223,10 @@ class TrackPlayerService {
 
 	async playSongAt(index: number): Promise<void> {
 		try {
+			console.log(`Playing song at index ${index}`);
 			await TrackPlayer.skip(index);
 			await TrackPlayer.play();
+			console.log("Song playing");
 		} catch (error) {
 			console.error("Error playing song at index:", error);
 		}
@@ -250,7 +262,7 @@ class TrackPlayerService {
 			if (queue.length <= 1) return;
 
 			const currentTrack =
-				currentTrackIndex !== null ? queue[currentTrackIndex!] : null;
+				currentTrackIndex !== null ? queue[currentTrackIndex] : null;
 			const shuffledQueue = [...queue];
 
 			for (let i = shuffledQueue.length - 1; i > 0; i--) {
@@ -299,7 +311,7 @@ class TrackPlayerService {
 	async getQueue(): Promise<Song[]> {
 		try {
 			const queue = await TrackPlayer.getQueue();
-			return queue.map((track) => this.trackToSong(track));
+			return queue.map((track: Track) => this.trackToSong(track));
 		} catch (error) {
 			console.error("Error getting queue:", error);
 			return [];
@@ -397,6 +409,8 @@ class TrackPlayerService {
 			await TrackPlayer.reset();
 
 			this.listeners.clear();
+
+			console.log("TrackPlayerService cleaned up");
 		} catch (error) {
 			console.error("Error cleaning up:", error);
 		}

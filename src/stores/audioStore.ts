@@ -1,9 +1,4 @@
-import {
-	AudioState,
-	ExtendedAudioState,
-	RepeatMode,
-	Song
-	} from "@/types";
+import { ExtendedAudioState, RepeatMode, Song } from "@/types";
 import { State } from "react-native-track-player";
 import { create } from "zustand";
 

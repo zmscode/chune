@@ -2,7 +2,7 @@ import TrackPlayerService from "@/core/TrackPlayerService";
 import { useAudioStore } from "@/stores/audioStore";
 import { RepeatMode, Song } from "@/types";
 import { useCallback, useEffect, useRef } from "react";
-import TrackPlayer, {
+import {
 	useProgress,
 	usePlaybackState,
 	useActiveTrack,
@@ -12,7 +12,6 @@ import TrackPlayer, {
 export const useAudioPlayer = () => {
 	const {
 		currentSong,
-		isPlaying,
 		queue,
 		repeatMode,
 		volume,
@@ -23,18 +22,15 @@ export const useAudioPlayer = () => {
 		setVolume,
 		setRepeatMode,
 		toggleShuffle,
-		isLoading,
 		setPlaybackState,
 	} = useAudioStore();
 
-	// Use react-native-track-player hooks
 	const progress = useProgress();
 	const playbackState = usePlaybackState();
 	const activeTrack = useActiveTrack();
 
 	const isMounted = useRef(true);
 
-	// Convert track to song when active track changes
 	useEffect(() => {
 		if (activeTrack) {
 			const song: Song = {
@@ -51,26 +47,26 @@ export const useAudioPlayer = () => {
 		}
 	}, [activeTrack, setCurrentSong]);
 
-	// Update playback state
 	useEffect(() => {
-		if (playbackState.state) {
+		if (playbackState.state !== undefined) {
 			setPlaybackState(playbackState.state);
 		}
 	}, [playbackState.state, setPlaybackState]);
 
-	// Update progress
 	useEffect(() => {
+		const state = playbackState.state ?? State.None;
 		setPlaybackStatus({
 			isLoading:
-				playbackState.state === State.Loading ||
-				playbackState.state === State.Buffering,
-			isPlaying: playbackState.state === State.Playing,
-			isBuffering: playbackState.state === State.Buffering,
+				state === State.Loading ||
+				state === State.Buffering ||
+				state === State.Connecting,
+			isPlaying: state === State.Playing,
+			isBuffering: state === State.Buffering,
 			positionMillis: progress.position * 1000,
 			durationMillis: progress.duration * 1000,
 			isMuted: false,
 			isLooping: false,
-			didJustFinish: playbackState.state === State.Ended,
+			didJustFinish: state === State.Ended,
 		});
 	}, [
 		progress.position,
@@ -82,8 +78,12 @@ export const useAudioPlayer = () => {
 	useEffect(() => {
 		isMounted.current = true;
 
-		TrackPlayerService.initialise();
-		TrackPlayerService.setRepeatMode(repeatMode);
+		const initializeService = async () => {
+			await TrackPlayerService.initialise();
+			await TrackPlayerService.setRepeatMode(repeatMode);
+		};
+
+		initializeService();
 
 		const handleQueueUpdate = (newQueue: Song[]) => {
 			if (!isMounted.current) return;
@@ -210,21 +210,25 @@ export const useAudioPlayer = () => {
 		}
 	}, [toggleShuffle, isShuffled]);
 
+	const state = playbackState.state ?? State.None;
+	const isPlaying = state === State.Playing;
+	const isLoading =
+		state === State.Loading ||
+		state === State.Buffering ||
+		state === State.Connecting;
+
 	return {
-		// State
 		currentSong,
-		isPlaying: playbackState.state === State.Playing,
-		position: progress.position * 1000, // Convert to milliseconds
-		duration: progress.duration * 1000, // Convert to milliseconds
+		isPlaying,
+		position: progress.position * 1000,
+		duration: progress.duration * 1000,
 		queue,
 		repeatMode,
 		volume,
 		isShuffled,
-		isLoading:
-			playbackState.state === State.Loading ||
-			playbackState.state === State.Buffering,
+		isLoading,
+		playbackState: state,
 
-		// Actions
 		play,
 		pause,
 		seek,

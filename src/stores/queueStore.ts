@@ -1,6 +1,6 @@
-import AudioService from "@/core/TrackPlayerService";
+import TrackPlayerService from "@/core/TrackPlayerService";
 import { useAudioStore } from "@/stores/audioStore";
-import { QueueStore } from "@/types";
+import { QueueMetadata, QueueStore, Song } from "@/types";
 import { useMemo } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -13,7 +13,7 @@ export const useQueueStore = create<QueueStore>()(
 			originalQueue: null,
 			upNext: [],
 
-			setActiveQueue: (metadata, songs) => {
+			setActiveQueue: async (metadata: QueueMetadata, songs: Song[]) => {
 				const currentQueue = get().activeQueue;
 
 				if (currentQueue && currentQueue.id !== metadata.id) {
@@ -30,7 +30,7 @@ export const useQueueStore = create<QueueStore>()(
 					originalQueue: null,
 				});
 
-				AudioService.setQueue(songs);
+				await TrackPlayerService.setQueue(songs);
 			},
 
 			clearActiveQueue: () =>
@@ -40,19 +40,19 @@ export const useQueueStore = create<QueueStore>()(
 					upNext: [],
 				}),
 
-			addToUpNext: (song) =>
+			addToUpNext: (song: Song) =>
 				set((state) => ({
 					upNext: [...state.upNext, song],
 				})),
 
-			removeFromUpNext: (songId) =>
+			removeFromUpNext: (songId: string) =>
 				set((state) => ({
 					upNext: state.upNext.filter((s) => s.id !== songId),
 				})),
 
 			clearUpNext: () => set({ upNext: [] }),
 
-			saveOriginalQueue: (songs) => set({ originalQueue: songs }),
+			saveOriginalQueue: (songs: Song[]) => set({ originalQueue: songs }),
 
 			restoreOriginalQueue: () => {
 				const original = get().originalQueue;
@@ -60,7 +60,7 @@ export const useQueueStore = create<QueueStore>()(
 				return original;
 			},
 
-			addToHistory: (metadata) =>
+			addToHistory: (metadata: QueueMetadata) =>
 				set((state) => ({
 					queueHistory: [...state.queueHistory.slice(-9), metadata],
 				})),

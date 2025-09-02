@@ -1,7 +1,7 @@
 import { ItemDivider } from "@/components/custom/ItemDivider";
 import { SongListItem } from "@/components/songs/SongListItem";
 import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
-import AudioService from "@/core/TrackPlayerService";
+import TrackPlayerService from "@/core/TrackPlayerService";
 import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
 import { SongListProps } from "@/props";
 import { Song } from "@/types";
@@ -22,18 +22,19 @@ export const SongList = ({
 	const handleSongSelect = useCallback(
 		async (selectedSong: Song) => {
 			try {
-				await AudioService.initialise();
+				await TrackPlayerService.initialise();
 
-				AudioService.setQueue(songs);
+				await TrackPlayerService.setQueue(songs);
+
 				const selectedIndex = songs.findIndex(
 					(song) => song.id === selectedSong.id
 				);
 
 				if (selectedIndex >= 0) {
-					await AudioService.playSongAt(selectedIndex);
+					await TrackPlayerService.playSongAt(selectedIndex);
 				} else {
-					await AudioService.loadSong(selectedSong);
-					await AudioService.play();
+					await TrackPlayerService.loadSong(selectedSong);
+					await TrackPlayerService.play();
 				}
 			} catch (error) {
 				console.error("Error playing song:", error);
@@ -42,20 +43,10 @@ export const SongList = ({
 		[songs]
 	);
 
-	/* ListHeaderComponent={
-		!hideQueueControls ? (
-			<QueueControls
-				songs={songs}
-				queueId={id}
-				isActive={isActiveQueue}
-				style={{ paddingBottom: 20 }}
-			/>
-		) : undefined
-	} */
-
 	return (
 		<FlatList
 			data={songs}
+			keyExtractor={(item) => item.id || item.uri}
 			contentContainerStyle={{ paddingTop: 10, paddingBottom: 128 }}
 			ListFooterComponent={ItemDivider}
 			ItemSeparatorComponent={ItemDivider}
@@ -63,9 +54,9 @@ export const SongList = ({
 				<View>
 					<Text
 						style={{
-							width: 200,
-							height: 200,
-							alignSelf: "center",
+							fontSize: 16,
+							color: "#666",
+							textAlign: "center",
 							marginTop: 40,
 							opacity: 0.3,
 						}}
