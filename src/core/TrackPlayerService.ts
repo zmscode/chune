@@ -4,6 +4,7 @@ import TrackPlayer, {
 	Capability,
 	Event,
 	PlaybackState,
+	ProgressUpdateEvent,
 	RepeatMode as TPRepeatMode,
 	State,
 	Track,
@@ -54,14 +55,14 @@ class TrackPlayerService {
 	}
 
 	private setupEventListeners(): void {
-		TrackPlayer.addEventListener(Event.PlaybackState, (event) => {
+		TrackPlayer.addEventListener(Event.PlaybackState, (event: Event) => {
 			console.log("Playback state changed:", event.state);
 			this.emit("playbackStateChange", event.state);
 		});
 
 		TrackPlayer.addEventListener(
 			Event.PlaybackActiveTrackChanged,
-			async (event) => {
+			async (event: Event) => {
 				console.log("Active track changed:", event);
 				if (event.track) {
 					const song = this.trackToSong(event.track);
@@ -72,7 +73,7 @@ class TrackPlayerService {
 
 		TrackPlayer.addEventListener(
 			Event.PlaybackProgressUpdated,
-			(event: Event) => {
+			(event: ProgressUpdateEvent) => {
 				this.emit("progressUpdate", {
 					position: event.position * 1000,
 					duration: event.duration * 1000,
@@ -92,8 +93,8 @@ class TrackPlayerService {
 		TrackPlayer.addEventListener(Event.RemotePrevious, () =>
 			this.skipToPrevious()
 		);
-		TrackPlayer.addEventListener(Event.RemoteSeek, (event: Event) =>
-			this.seek(event.position * 1000)
+		TrackPlayer.addEventListener(Event.RemoteSeek, (position: number) =>
+			this.seek(position * 1000)
 		);
 	}
 
@@ -265,6 +266,7 @@ class TrackPlayerService {
 				currentTrackIndex !== null ? queue[currentTrackIndex] : null;
 			const shuffledQueue = [...queue];
 
+			// Fisher-Yates shuffle
 			for (let i = shuffledQueue.length - 1; i > 0; i--) {
 				const j = Math.floor(Math.random() * (i + 1));
 				[shuffledQueue[i], shuffledQueue[j]] = [

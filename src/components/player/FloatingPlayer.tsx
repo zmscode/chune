@@ -1,18 +1,17 @@
+import { PlayerScreen } from "@/components/player/PlayerScreen";
 import { UNKNOWN_SONG_IMAGE_URI } from "@/constants";
+import TrackPlayerService from "@/core/TrackPlayerService";
 import { useAudioPlayer } from "@/hooks/audio/useAudioPlayer";
+import { PlayerControlsProps } from "@/props";
 import { sheets } from "@/sheets/sheetManager";
 import { floatingPlayerStyles } from "@/styles/floatingPlayer";
 import { Image } from "expo-image";
+import { FastForwardIcon, PauseIcon, PlayIcon } from "phosphor-react-native";
 import { TouchableOpacity, View, ViewProps } from "react-native";
 import TextTicker from "react-native-text-ticker";
-import {
-	PlayPauseButton,
-	SkipToNextButton,
-	PlayerScreen,
-} from "@/components/player/PlayerScreen";
 
 export const FloatingPlayer = ({ style }: ViewProps) => {
-	const { currentSong } = useAudioPlayer();
+	const { currentSong, isPlaying } = useAudioPlayer();
 
 	if (!currentSong) return null;
 
@@ -20,7 +19,6 @@ export const FloatingPlayer = ({ style }: ViewProps) => {
 
 	const handlePress = () => {
 		if (!playerSheet) return;
-
 		playerSheet.onOpen();
 	};
 
@@ -62,12 +60,51 @@ export const FloatingPlayer = ({ style }: ViewProps) => {
 
 				<View style={floatingPlayerStyles.songControlsContainer}>
 					<PlayPauseButton iconSize={32} />
-
 					<SkipToNextButton iconSize={32} />
 				</View>
 			</TouchableOpacity>
 
 			<PlayerScreen />
 		</>
+	);
+};
+
+const PlayPauseButton = ({ iconSize = 32 }: PlayerControlsProps) => {
+	const { isPlaying } = useAudioPlayer();
+
+	const togglePlayPause = (e: any) => {
+		e.stopPropagation();
+		isPlaying ? TrackPlayerService.pause() : TrackPlayerService.play();
+	};
+
+	return (
+		<TouchableOpacity
+			activeOpacity={0.85}
+			onPress={togglePlayPause}
+			hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+		>
+			{isPlaying ? (
+				<PauseIcon size={iconSize} color={"#171f21"} />
+			) : (
+				<PlayIcon size={iconSize} color={"#171f21"} />
+			)}
+		</TouchableOpacity>
+	);
+};
+
+const SkipToNextButton = ({ iconSize = 32 }: PlayerControlsProps) => {
+	const handlePress = (e: any) => {
+		e.stopPropagation();
+		TrackPlayerService.skipToNext();
+	};
+
+	return (
+		<TouchableOpacity
+			activeOpacity={0.7}
+			onPress={handlePress}
+			hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+		>
+			<FastForwardIcon size={iconSize} color={"#171f21"} />
+		</TouchableOpacity>
 	);
 };

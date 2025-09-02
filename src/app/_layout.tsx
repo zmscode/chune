@@ -1,6 +1,6 @@
 import { FavouritesInitialiser } from "@/components/custom/FavouritesInitialiser";
-import AudioService from "@/core/TrackPlayerService";
 import TrackPlayerService from "@/core/TrackPlayerService";
+import "@/sheets/sheetManager.ts";
 import { PlaybackService } from "@/utils/service";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -20,6 +20,7 @@ configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
 	strict: false,
 });
+
 SplashScreen.preventAutoHideAsync();
 
 const App = () => {
@@ -41,15 +42,12 @@ const App = () => {
 		};
 	}, []);
 
-	SplashScreen.hideAsync();
-
 	return (
 		<SafeAreaProvider>
 			<GestureHandlerRootView style={{ flex: 1 }}>
 				<FavouritesInitialiser>
 					<SheetProvider context="global">
 						<RootNavigation />
-
 						<StatusBar style="auto" />
 					</SheetProvider>
 				</FavouritesInitialiser>
