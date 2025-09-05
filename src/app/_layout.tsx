@@ -30,15 +30,10 @@ SplashScreen.preventAutoHideAsync();
 
 const App = () => {
 	const [loaded] = useFonts({
-		"MartianGrotesk-StdTh": require("./assets/fonts/MartianGrotesk-StdTh.otf"),
-		"MartianGrotesk-StdUlt": require("./assets/fonts/MartianGrotesk-StdUlt.otf"),
-		"MartianGrotesk-StdxLt": require("./assets/fonts/MartianGrotesk-StdxLt.otf"),
 		"MartianGrotesk-StdLt": require("./assets/fonts/MartianGrotesk-StdLt.otf"),
 		"MartianGrotesk-StdRg": require("./assets/fonts/MartianGrotesk-StdRg.otf"),
 		"MartianGrotesk-StdMd": require("./assets/fonts/MartianGrotesk-StdMd.otf"),
 		"MartianGrotesk-StdBd": require("./assets/fonts/MartianGrotesk-StdBd.otf"),
-		"MartianGrotesk-StdxBd": require("./assets/fonts/MartianGrotesk-StdxBd.otf"),
-		"MartianGrotesk-StdBl": require("./assets/fonts/MartianGrotesk-StdBl.otf"),
 	});
 
 	useEffect(() => {
