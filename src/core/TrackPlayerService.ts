@@ -1,4 +1,5 @@
 import { RepeatMode, Song } from "@/types";
+// src/core/TrackPlayerService.ts
 import TrackPlayer, {
 	AppKilledPlaybackBehavior,
 	Capability,
@@ -8,6 +9,7 @@ import TrackPlayer, {
 	RepeatMode as TPRepeatMode,
 	State,
 	Track,
+	Position,
 } from "react-native-track-player";
 
 class TrackPlayerService {
@@ -93,8 +95,9 @@ class TrackPlayerService {
 		TrackPlayer.addEventListener(Event.RemotePrevious, () =>
 			this.skipToPrevious()
 		);
-		TrackPlayer.addEventListener(Event.RemoteSeek, (position: number) =>
-			this.seek(position * 1000)
+		TrackPlayer.addEventListener(
+			Event.RemoteSeek,
+			({ position }: Position) => this.seek(position * 1000)
 		);
 	}
 
@@ -243,9 +246,10 @@ class TrackPlayerService {
 
 	async skipToPrevious(): Promise<void> {
 		try {
-			const position = await TrackPlayer.getPosition();
+			const position = await TrackPlayer.getProgress();
 
-			if (position > 3) {
+			// If more than 3 seconds into the song, restart it
+			if (position.position > 3) {
 				await TrackPlayer.seekTo(0);
 			} else {
 				await TrackPlayer.skipToPrevious();

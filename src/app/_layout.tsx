@@ -1,6 +1,6 @@
-import "../sheets/sheetManager";
 import { FavouritesInitialiser } from "@/components/custom/FavouritesInitialiser";
 import TrackPlayerService from "@/core/TrackPlayerService";
+import "@/sheets/sheets";
 import { PlaybackService } from "@/utils/service";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -48,6 +48,7 @@ const App = () => {
 				<FavouritesInitialiser>
 					<SheetProvider context="global">
 						<RootNavigation />
+
 						<StatusBar style="auto" />
 					</SheetProvider>
 				</FavouritesInitialiser>

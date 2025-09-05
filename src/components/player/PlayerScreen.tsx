@@ -29,7 +29,7 @@ import {
 
 const PlayerScreen = (props: SheetProps) => {
 	const { currentSong, isLoading } = useAudioPlayer();
-	const { height } = useDeviceStore();
+	const { width, height } = useDeviceStore();
 	const { bottom } = useSafeAreaInsets();
 
 	if (isLoading && !currentSong) {
@@ -38,8 +38,9 @@ const PlayerScreen = (props: SheetProps) => {
 				id={props.sheetId}
 				gestureEnabled={true}
 				indicatorStyle={{
-					width: 100,
+					width: width / 4,
 					marginTop: 10,
+					backgroundColor: "#a4a4a4",
 				}}
 				containerStyle={{
 					backgroundColor: "#eeeeee",
@@ -63,8 +64,9 @@ const PlayerScreen = (props: SheetProps) => {
 			id={props.sheetId}
 			gestureEnabled={true}
 			indicatorStyle={{
-				width: 100,
+				width: width / 4,
 				marginTop: 10,
+				backgroundColor: "#a4a4a4",
 			}}
 			containerStyle={{
 				backgroundColor: "#eeeeee",
@@ -75,7 +77,7 @@ const PlayerScreen = (props: SheetProps) => {
 					paddingTop: 30,
 					paddingBottom: bottom + 20,
 					paddingHorizontal: 24,
-					minHeight: height * 0.9,
+					minHeight: height,
 				}}
 			>
 				<View
@@ -269,4 +271,5 @@ export const SkipToPreviousButton = ({
 	);
 };
 
+// Export as default for sheet registration
 export default PlayerScreen;

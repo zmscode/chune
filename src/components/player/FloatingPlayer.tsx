@@ -14,8 +14,16 @@ export const FloatingPlayer = ({ style }: ViewProps) => {
 
 	if (!currentSong) return null;
 
-	const handlePress = () => {
-		SheetManager.show("player");
+	const handlePress = async () => {
+		try {
+			console.log(
+				"FloatingPlayer pressed - attempting to show player sheet"
+			);
+			await SheetManager.show("player");
+			console.log("Sheet show command executed");
+		} catch (error) {
+			console.error("Error showing player sheet:", error);
+		}
 	};
 
 	return (
@@ -67,6 +75,7 @@ const PlayPauseButton = ({
 }: PlayerControlsProps & { isPlaying: boolean }) => {
 	const togglePlayPause = (e: any) => {
 		e.stopPropagation();
+		console.log("Play/Pause button pressed");
 		isPlaying ? TrackPlayerService.pause() : TrackPlayerService.play();
 	};
 
@@ -88,6 +97,7 @@ const PlayPauseButton = ({
 const SkipToNextButton = ({ iconSize = 32 }: PlayerControlsProps) => {
 	const handlePress = (e: any) => {
 		e.stopPropagation();
+		console.log("Skip to next button pressed");
 		TrackPlayerService.skipToNext();
 	};
 
