@@ -46,7 +46,22 @@
 					"microphonePermission": "Allow Chune to access your microphone."
 				}
 			],
-			"expo-font"
+			[
+				"expo-font",
+				{
+					"fonts": [
+						"./assets/fonts/MartianGrotesk-StdBd.otf",
+						"./assets/fonts/MartianGrotesk-StdBl.otf",
+						"./assets/fonts/MartianGrotesk-StdLt.otf",
+						"./assets/fonts/MartianGrotesk-StdMd.otf",
+						"./assets/fonts/MartianGrotesk-StdRg.otf",
+						"./assets/fonts/MartianGrotesk-StdTh.otf",
+						"./assets/fonts/MartianGrotesk-StdUlt.otf",
+						"./assets/fonts/MartianGrotesk-StdxBd.otf",
+						"./assets/fonts/MartianGrotesk-StdxLt.otf"
+					]
+				}
+			]
 		],
 		"owner": "zmscode",
 		"extra": {

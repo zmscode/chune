@@ -1,10 +1,19 @@
+import MGFONT_BLACK from "@/assets/fonts/MartianGrotesk-Black.otf";
+import MGFONT_BOLD from "@/assets/fonts/MartianGrotesk-Bold.otf";
+import MGFONT_EXTRA_BOLD from "@/assets/fonts/MartianGrotesk-ExtraBold.otf";
+import MGFONT_EXTRA_LIGHT from "@/assets/fonts/MartianGrotesk-ExtraLight.otf";
+import MGFONT_LIGHT from "@/assets/fonts/MartianGrotesk-Light.otf";
+import MGFONT_MEDIUM from "@/assets/fonts/MartianGrotesk-Medium.otf";
+import MGFONT_REGULAR from "@/assets/fonts/MartianGrotesk-Regular.otf";
+import MGFONT_THIN from "@/assets/fonts/MartianGrotesk-Thin.otf";
+import MGFONT_ULTRA_THIN from "@/assets/fonts/MartianGrotesk-UltraThin.otf";
 import { FavouritesInitialiser } from "@/components/custom/FavouritesInitialiser";
 import TrackPlayerService from "@/core/TrackPlayerService";
 import "@/sheets/sheets";
 import { PlaybackService } from "@/utils/service";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { SplashScreen } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { useColorScheme } from "react-native";
@@ -30,10 +39,15 @@ SplashScreen.preventAutoHideAsync();
 
 const App = () => {
 	const [loaded] = useFonts({
-		"MartianGrotesk-StdLt": require("./assets/fonts/MartianGrotesk-StdLt.otf"),
-		"MartianGrotesk-StdRg": require("./assets/fonts/MartianGrotesk-StdRg.otf"),
-		"MartianGrotesk-StdMd": require("./assets/fonts/MartianGrotesk-StdMd.otf"),
-		"MartianGrotesk-StdBd": require("./assets/fonts/MartianGrotesk-StdBd.otf"),
+		"MartianGrotesk-Black": MGFONT_BLACK,
+		"MartianGrotesk-Bold": MGFONT_BOLD,
+		"MartianGrotesk-ExtraBold": MGFONT_EXTRA_BOLD,
+		"MartianGrotesk-ExtraLight": MGFONT_EXTRA_LIGHT,
+		"MartianGrotesk-Light": MGFONT_LIGHT,
+		"MartianGrotesk-Medium": MGFONT_MEDIUM,
+		"MartianGrotesk-Regular": MGFONT_REGULAR,
+		"MartianGrotesk-Thin": MGFONT_THIN,
+		"MartianGrotesk-UltraLight": MGFONT_ULTRA_THIN,
 	});
 
 	useEffect(() => {
