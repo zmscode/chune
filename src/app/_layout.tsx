@@ -38,19 +38,25 @@ configureReanimatedLogger({
 SplashScreen.preventAutoHideAsync();
 
 const App = () => {
-	const [loaded] = useFonts({
-		"MartianGrotesk-Black": MGFONT_BLACK,
-		"MartianGrotesk-Bold": MGFONT_BOLD,
-		"MartianGrotesk-ExtraBold": MGFONT_EXTRA_BOLD,
-		"MartianGrotesk-ExtraLight": MGFONT_EXTRA_LIGHT,
-		"MartianGrotesk-Light": MGFONT_LIGHT,
-		"MartianGrotesk-Medium": MGFONT_MEDIUM,
-		"MartianGrotesk-Regular": MGFONT_REGULAR,
-		"MartianGrotesk-Thin": MGFONT_THIN,
-		"MartianGrotesk-UltraLight": MGFONT_ULTRA_THIN,
+	const [loaded, error] = useFonts({
+		"MartianGrotesk-Black": require("../../assets/fonts/MartianGrotesk-Black.otf"),
+		"MartianGrotesk-Bold": require("../../assets/fonts/MartianGrotesk-Bold.otf"),
+		"MartianGrotesk-ExtraBold": require("../../assets/fonts/MartianGrotesk-ExtraBold.otf"),
+		"MartianGrotesk-ExtraLight": require("../../assets/fonts/MartianGrotesk-ExtraLight.otf"),
+		"MartianGrotesk-Light": require("../../assets/fonts/MartianGrotesk-Light.otf"),
+		"MartianGrotesk-Medium": require("../../assets/fonts/MartianGrotesk-Medium.otf"),
+		"MartianGrotesk-Regular": require("../../assets/fonts/MartianGrotesk-Regular.otf"),
+		"MartianGrotesk-Thin": require("../../assets/fonts/MartianGrotesk-Thin.otf"),
+		"MartianGrotesk-UltraLight": require("../../assets/fonts/MartianGrotesk-UltraThin.otf"),
 	});
 
 	useEffect(() => {
+		if (error) {
+			console.error("Font loading error:", error);
+			SplashScreen.hideAsync();
+			return;
+		}
+
 		if (loaded) {
 			const initializePlayer = async () => {
 				try {
@@ -68,9 +74,9 @@ const App = () => {
 				TrackPlayerService.cleanup();
 			};
 		}
-	}, [loaded]);
+	}, [loaded, error]);
 
-	if (!loaded) {
+	if (!loaded && !error) {
 		return null;
 	}
 

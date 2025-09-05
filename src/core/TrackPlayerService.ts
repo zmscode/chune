@@ -1,5 +1,4 @@
 import { RepeatMode, Song } from "@/types";
-// src/core/TrackPlayerService.ts
 import TrackPlayer, {
 	AppKilledPlaybackBehavior,
 	Capability,

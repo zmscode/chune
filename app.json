@@ -50,15 +50,14 @@
 				"expo-font",
 				{
 					"fonts": [
-						"./assets/fonts/MartianGrotesk-StdBd.otf",
-						"./assets/fonts/MartianGrotesk-StdBl.otf",
-						"./assets/fonts/MartianGrotesk-StdLt.otf",
-						"./assets/fonts/MartianGrotesk-StdMd.otf",
-						"./assets/fonts/MartianGrotesk-StdRg.otf",
-						"./assets/fonts/MartianGrotesk-StdTh.otf",
-						"./assets/fonts/MartianGrotesk-StdUlt.otf",
-						"./assets/fonts/MartianGrotesk-StdxBd.otf",
-						"./assets/fonts/MartianGrotesk-StdxLt.otf"
+						"./assets/fonts/MartianGrotesk-Black.otf",
+						"./assets/fonts/MartianGrotesk-Bold.otf",
+						"./assets/fonts/MartianGrotesk-ExtraBold.otf",
+						"./assets/fonts/MartianGrotesk-ExtraLight.otf",
+						"./assets/fonts/MartianGrotesk-Light.otf",
+						"./assets/fonts/MartianGrotesk-Medium.otf",
+						"./assets/fonts/MartianGrotesk-Regular.otf",
+						"./assets/fonts/MartianGrotesk-Thin.otf"
 					]
 				}
 			]
