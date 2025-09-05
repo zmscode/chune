@@ -21,3 +21,4 @@
     + Grab media length on load (?) beginning with songs in playlists
 
 - Improve the data storage format
+

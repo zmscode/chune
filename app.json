@@ -45,7 +45,8 @@
 				{
 					"microphonePermission": "Allow Chune to access your microphone."
 				}
-			]
+			],
+			"expo-font"
 		],
 		"owner": "zmscode",
 		"extra": {
