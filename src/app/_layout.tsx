@@ -38,47 +38,23 @@ configureReanimatedLogger({
 SplashScreen.preventAutoHideAsync();
 
 const App = () => {
-	const [loaded, error] = useFonts({
-		"MartianGrotesk-Black": require("../../assets/fonts/MartianGrotesk-Black.otf"),
-		"MartianGrotesk-Bold": require("../../assets/fonts/MartianGrotesk-Bold.otf"),
-		"MartianGrotesk-ExtraBold": require("../../assets/fonts/MartianGrotesk-ExtraBold.otf"),
-		"MartianGrotesk-ExtraLight": require("../../assets/fonts/MartianGrotesk-ExtraLight.otf"),
-		"MartianGrotesk-Light": require("../../assets/fonts/MartianGrotesk-Light.otf"),
-		"MartianGrotesk-Medium": require("../../assets/fonts/MartianGrotesk-Medium.otf"),
-		"MartianGrotesk-Regular": require("../../assets/fonts/MartianGrotesk-Regular.otf"),
-		"MartianGrotesk-Thin": require("../../assets/fonts/MartianGrotesk-Thin.otf"),
-		"MartianGrotesk-UltraLight": require("../../assets/fonts/MartianGrotesk-UltraThin.otf"),
-	});
-
 	useEffect(() => {
-		if (error) {
-			console.error("Font loading error:", error);
-			SplashScreen.hideAsync();
-			return;
-		}
+		const initializePlayer = async () => {
+			try {
+				await TrackPlayerService.initialise();
+				SplashScreen.hideAsync();
+			} catch (error) {
+				console.error("Error initializing player:", error);
+				SplashScreen.hideAsync();
+			}
+		};
 
-		if (loaded) {
-			const initializePlayer = async () => {
-				try {
-					await TrackPlayerService.initialise();
-					SplashScreen.hideAsync();
-				} catch (error) {
-					console.error("Error initializing player:", error);
-					SplashScreen.hideAsync();
-				}
-			};
+		initializePlayer();
 
-			initializePlayer();
-
-			return () => {
-				TrackPlayerService.cleanup();
-			};
-		}
-	}, [loaded, error]);
-
-	if (!loaded && !error) {
-		return null;
-	}
+		return () => {
+			TrackPlayerService.cleanup();
+		};
+	}, []);
 
 	return (
 		<SafeAreaProvider>
